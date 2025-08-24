@@ -1,0 +1,118 @@
+:root {
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Drag and Drop Styles */
+.drag-over {
+  background: rgba(25, 118, 210, 0.05) !important;
+  border: 2px dashed #1976D2 !important;
+  transition: all 0.2s ease;
+}
+
+.dragging {
+  opacity: 0.8;
+  transform: rotate(1deg) scale(1.01);
+  z-index: 1000;
+  transition: all 0.2s ease;
+}
+
+/* Form Element Styles */
+.form-element-wrapper {
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: grab;
+  border-radius: 12px !important;
+}
+
+.form-element-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.form-element-wrapper:active {
+  cursor: grabbing;
+}
+
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.element-enter-active {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.element-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.element-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.element-move {
+  transition: transform 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .v-container {
+    padding: 8px !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Performance optimizations */
+.v-card {
+  will-change: transform;
+}
+
+.form-element-wrapper {
+  contain: layout style paint;
+}

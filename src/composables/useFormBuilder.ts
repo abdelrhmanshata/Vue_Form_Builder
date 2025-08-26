@@ -1,120 +1,15 @@
 import { ref, computed, readonly } from 'vue';
-import type { FormElement, FormConfig, FormElementTemplate } from '../types/form';
+// Add to existing imports
+import { formElementTemplates } from '@/components/Elements/FormElement'
+import type { FormElement, FormConfig, FormElementTemplate, FormHistory, FormAction, FormSettings } from '@/types/form';
 
+
+// Re-export formElementTemplates
+export { formElementTemplates };
+
+
+// Functions
 const STORAGE_KEY = 'vue-form-builder-forms';
-
-// Form element templates
-export const formElementTemplates: FormElementTemplate[] = [
-  {
-    type: 'text',
-    label: 'Text Input',
-    icon: 'mdi-form-textbox',
-    defaultProps: {
-      label: 'Text Field',
-      placeholder: 'Enter text...',
-      required: false,
-      width: 'full',
-      newRow: false
-    }
-  },
-  {
-    type: 'email',
-    label: 'Email Input',
-    icon: 'mdi-email',
-    defaultProps: {
-      label: 'Email Address',
-      placeholder: 'Enter email...',
-      required: true,
-      width: 'full',
-      newRow: false
-    }
-  },
-  {
-    type: 'password',
-    label: 'Password Input',
-    icon: 'mdi-lock',
-    defaultProps: {
-      label: 'Password',
-      placeholder: 'Enter password...',
-      required: true,
-      width: 'full',
-      newRow: false
-    }
-  },
-  {
-    type: 'textarea',
-    label: 'Text Area',
-    icon: 'mdi-text',
-    defaultProps: {
-      label: 'Message',
-      placeholder: 'Enter your message...',
-      required: false,
-      width: 'full',
-      newRow: false
-    }
-  },
-  {
-    type: 'select',
-    label: 'Select Dropdown',
-    icon: 'mdi-menu-down',
-    defaultProps: {
-      label: 'Select Option',
-      required: false,
-      width: 'full',
-      newRow: false,
-      options: ['Option 1', 'Option 2', 'Option 3']
-    }
-  },
-  {
-    type: 'checkbox',
-    label: 'Checkbox',
-    icon: 'mdi-checkbox-marked',
-    defaultProps: {
-      label: 'Checkbox Option',
-      required: false,
-      width: 'full',
-      newRow: false,
-      options: ['Option 1', 'Option 2']
-    }
-  },
-  {
-    type: 'radio',
-    label: 'Radio Button',
-    icon: 'mdi-radiobox-marked',
-    defaultProps: {
-      label: 'Radio Options',
-      required: false,
-      width: 'full',
-      newRow: false,
-      options: ['Option 1', 'Option 2', 'Option 3']
-    }
-  },
-  {
-    type: 'number',
-    label: 'Number Input',
-    icon: 'mdi-numeric',
-    defaultProps: {
-      label: 'Number',
-      placeholder: 'Enter number...',
-      required: false,
-      width: 'full',
-      newRow: false
-    }
-  },
-  {
-    type: 'date',
-    label: 'Date Picker',
-    icon: 'mdi-calendar',
-    defaultProps: {
-      label: 'Date',
-      required: false,
-      width: 'full',
-      newRow: false
-    }
-  }
-];
-
-// Load forms from localStorage
 const loadForms = (): FormConfig[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -146,7 +41,7 @@ export function useFormBuilder() {
   const currentForm = ref<FormConfig | null>(null);
   const selectedElement = ref<FormElement | null>(null);
 
-  const currentFormElements = computed(() => 
+  const currentFormElements = computed(() =>
     currentForm.value?.elements.sort((a, b) => a.position - b.position) || []
   );
 
@@ -159,7 +54,7 @@ export function useFormBuilder() {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    
+
     forms.value.push(newForm);
     currentForm.value = newForm;
     saveForms(forms.value);
@@ -180,30 +75,30 @@ export function useFormBuilder() {
     }
   };
 
-  const addElement = (template: FormElementTemplate, position?: number) => {
-    if (!currentForm.value) return;
+  // const addElement = (template: FormElementTemplate, position?: number) => {
+  //   if (!currentForm.value) return;
 
-    const newElement: FormElement = {
-      id: `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      type: template.type,
-      position: position ?? currentForm.value.elements.length,
-      ...template.defaultProps
-    } as FormElement;
+  //   const newElement: FormElement = {
+  //     id: `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+  //     type: template.type,
+  //     position: position ?? currentForm.value.elements.length,
+  //     ...template.defaultProps
+  //   } as FormElement;
 
-    // Adjust positions of existing elements if inserting in middle
-    if (position !== undefined) {
-      currentForm.value.elements.forEach(el => {
-        if (el.position >= position) {
-          el.position++;
-        }
-      });
-    }
+  //   // Adjust positions of existing elements if inserting in middle
+  //   if (position !== undefined) {
+  //     currentForm.value.elements.forEach(el => {
+  //       if (el.position >= position) {
+  //         el.position++;
+  //       }
+  //     });
+  //   }
 
-    currentForm.value.elements.push(newElement);
-    currentForm.value.updatedAt = new Date();
-    saveForms(forms.value);
-    return newElement;
-  };
+  //   currentForm.value.elements.push(newElement);
+  //   currentForm.value.updatedAt = new Date();
+  //   saveForms(forms.value);
+  //   return newElement;
+  // };
 
   const updateElement = (elementId: string, updates: Partial<FormElement>) => {
     if (!currentForm.value) return;
@@ -244,7 +139,7 @@ export function useFormBuilder() {
     if (!element) return;
 
     const oldPosition = element.position;
-    
+
     // Adjust positions of other elements
     currentForm.value.elements.forEach(el => {
       if (el.id === elementId) {
@@ -299,6 +194,7 @@ export function useFormBuilder() {
     return JSON.stringify(currentForm.value, null, 2);
   };
 
+  // not need 
   const generateFormHTML = () => {
     if (!currentForm.value) return '';
 
@@ -313,41 +209,50 @@ export function useFormBuilder() {
             <label for="${element.id}">${element.label}${element.required ? ' *' : ''}</label>
             <input type="${element.type}" id="${element.id}" name="${element.id}" ${element.placeholder ? `placeholder="${element.placeholder}"` : ''} ${element.required ? 'required' : ''} />
           </div>`;
-        
+
         case 'textarea':
           return `<div class="form-group">
             <label for="${element.id}">${element.label}${element.required ? ' *' : ''}</label>
             <textarea id="${element.id}" name="${element.id}" ${element.placeholder ? `placeholder="${element.placeholder}"` : ''} ${element.required ? 'required' : ''}></textarea>
           </div>`;
-        
+
         case 'select':
+        case 'multiselect':
+          const multipleAttr = element.type === 'multiselect' ? 'multiple' : '';
           return `<div class="form-group">
             <label for="${element.id}">${element.label}${element.required ? ' *' : ''}</label>
-            <select id="${element.id}" name="${element.id}" ${element.required ? 'required' : ''}>
+            <select id="${element.id}" name="${element.id}" ${multipleAttr} ${element.required ? 'required' : ''}>
               ${element.options?.map(option => `<option value="${option}">${option}</option>`).join('') || ''}
             </select>
           </div>`;
-        
+
         case 'radio':
           return `<div class="form-group">
             <fieldset>
               <legend>${element.label}${element.required ? ' *' : ''}</legend>
-              ${element.options?.map((option, index) => 
-                `<label><input type="radio" name="${element.id}" value="${option}" ${element.required && index === 0 ? 'required' : ''} /> ${option}</label>`
-              ).join('') || ''}
+              ${element.options?.map((option, index) =>
+            `<label><input type="radio" name="${element.id}" value="${option}" ${element.required && index === 0 ? 'required' : ''} /> ${option}</label>`
+          ).join('') || ''}
             </fieldset>
           </div>`;
-        
+
         case 'checkbox':
           return `<div class="form-group">
             <fieldset>
               <legend>${element.label}</legend>
-              ${element.options?.map(option => 
-                `<label><input type="checkbox" name="${element.id}[]" value="${option}" /> ${option}</label>`
-              ).join('') || ''}
+              ${element.options?.map(option =>
+            `<label><input type="checkbox" name="${element.id}[]" value="${option}" /> ${option}</label>`
+          ).join('') || ''}
             </fieldset>
           </div>`;
-        
+
+        case 'image':
+        case 'file':
+          return `<div class="form-group">
+            <label for="${element.id}">${element.label}${element.required ? ' *' : ''}</label>
+            <input type="file" id="${element.id}" name="${element.id}" ${element.required ? 'required' : ''} accept="${element.type === 'image' ? 'image/*' : '*/*'}" />
+          </div>`;
+
         default:
           return '';
       }
@@ -361,13 +266,98 @@ export function useFormBuilder() {
     </form>`;
   };
 
+
+  // Add to the function
+  const formHistory = ref<FormHistory>({
+    actions: [],
+    currentIndex: -1
+  });
+
+  const formSettings = ref<FormSettings>({
+    autoSave: true,
+    saveInterval: 2000,
+    gridSnap: true,
+    showGrid: false,
+    theme: 'light'
+  });
+
+  // Add history tracking to all actions
+  const addToHistory = (action: Omit<FormAction, 'timestamp'>) => {
+    const historyAction: FormAction = {
+      ...action,
+      timestamp: new Date()
+    };
+
+    // Remove future actions if we're not at the end
+    if (formHistory.value.currentIndex < formHistory.value.actions.length - 1) {
+      formHistory.value.actions = formHistory.value.actions.slice(0, formHistory.value.currentIndex + 1);
+    }
+
+    formHistory.value.actions.push(historyAction);
+    formHistory.value.currentIndex = formHistory.value.actions.length - 1;
+  };
+
+  // Modify existing functions to include history
+  const addElement = (template: FormElementTemplate, position?: number) => {
+    if (!currentForm.value) return;
+
+    const newElement: FormElement = {
+      id: `element-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: template.type,
+      position: position ?? currentForm.value.elements.length,
+      ...template.defaultProps
+    } as FormElement;
+
+    // Adjust positions
+    if (position !== undefined) {
+      currentForm.value.elements.forEach(el => {
+        if (el.position >= position) {
+          el.position++;
+        }
+      });
+    }
+
+    currentForm.value.elements.push(newElement);
+    currentForm.value.updatedAt = new Date();
+
+    addToHistory({
+      type: 'add',
+      elementId: newElement.id,
+      data: { element: newElement, position }
+    });
+
+    saveForms(forms.value);
+    return newElement;
+  };
+
+  // Add undo/redo functionality
+  const undo = () => {
+    if (formHistory.value.currentIndex >= 0) {
+      const action = formHistory.value.actions[formHistory.value.currentIndex];
+      console.log('Undo action:', action);
+      // تنفيذ منطق التراجع هنا
+      formHistory.value.currentIndex--;
+    }
+  };
+
+  const redo = () => {
+    if (formHistory.value.currentIndex < formHistory.value.actions.length - 1) {
+      formHistory.value.currentIndex++;
+      const action = formHistory.value.actions[formHistory.value.currentIndex];
+      console.log('Redo action:', action);
+      // تنفيذ منطق الإعادة هنا
+    }
+  };
+
+  const canUndo = computed(() => formHistory.value.currentIndex >= 0);
+  const canRedo = computed(() => formHistory.value.currentIndex < formHistory.value.actions.length - 1);
+
   return {
     // State
     forms: readonly(forms),
     currentForm: readonly(currentForm),
     currentFormElements,
     selectedElement,
-    formElementTemplates,
 
     // Actions
     createNewForm,
@@ -380,6 +370,13 @@ export function useFormBuilder() {
     duplicateElement,
     deleteForm,
     exportFormConfig,
-    generateFormHTML
+    generateFormHTML,
+    // New History
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    formHistory: readonly(formHistory),
+    formSettings: readonly(formSettings)
   };
 }

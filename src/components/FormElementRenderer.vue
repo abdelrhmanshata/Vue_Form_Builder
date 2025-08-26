@@ -1,10 +1,10 @@
 <template>
   <div
     class="form-element-wrapper"
-    :class="{ 
-      'selected': isSelected, 
-      'dragging': isDragging,
-      [`width-${element.width}`]: true
+    :class="{
+      selected: isSelected,
+      dragging: isDragging,
+      [`width-${element.width}`]: true,
     }"
     @click="$emit('select', element)"
     draggable="true"
@@ -30,39 +30,15 @@
 
     <div class="form-element">
       <!-- Text Input -->
-      <v-text-field
-        v-if="['text', 'email', 'password', 'number'].includes(element.type)"
-        :type="element.type"
-        :label="element.label"
-        :placeholder="element.placeholder"
-        :required="element.required"
-        variant="outlined"
-        readonly
-        class="preview-field"
+      <BaseTextField
+        v-if="['text', 'email', 'number', 'date'].includes(element.type)"
+        :element="element"
       />
-
-      <!-- Date Input -->
-      <v-text-field
-        v-else-if="element.type === 'date'"
-        type="date"
-        :label="element.label"
-        :required="element.required"
-        variant="outlined"
-        readonly
-        class="preview-field"
-      />
-
       <!-- Textarea -->
-      <v-textarea
-        v-else-if="element.type === 'textarea'"
-        :label="element.label"
-        :placeholder="element.placeholder"
-        :required="element.required"
-        variant="outlined"
-        rows="3"
-        readonly
-        class="preview-field"
-      />
+      <BaseTextArea v-else-if="element.type === 'textarea'" :element="element" />
+
+      <!-- Date Picker -->
+      <BaseDatePicker v-else-if="element.type === 'date_picker'" :element="element" />
 
       <!-- Select -->
       <v-select
@@ -71,8 +47,22 @@
         :items="element.options || []"
         :required="element.required"
         variant="outlined"
-        readonly
         class="preview-field"
+        readonly
+        clearable
+      />
+
+      <!-- Multi Select -->
+      <v-select
+        v-else-if="element.type === 'multiselect'"
+        :label="element.label"
+        :items="element.options || []"
+        :required="element.required"
+        variant="outlined"
+        class="preview-field"
+        readonly
+        multiple
+        chips
       />
 
       <!-- Radio Buttons -->
@@ -109,13 +99,40 @@
           />
         </div>
       </div>
+
+      <!-- Image -->
+      <div v-else-if="element.type === 'image'" class="image-group">
+        <label class="field-label">
+          {{ element.label }}
+          <span v-if="element.required" class="required">*</span>
+        </label>
+        <div class="image-preview">
+          <v-icon icon="mdi-image" size="48" color="grey-lighten-2" />
+          <p class="text-caption text-grey-lighten-1 mt-2">Image Upload</p>
+        </div>
+      </div>
+
+      <!-- File Upload -->
+      <div v-else-if="element.type === 'file'" class="file-group">
+        <label class="field-label">
+          {{ element.label }}
+          <span v-if="element.required" class="required">*</span>
+        </label>
+        <div class="file-preview">
+          <v-icon icon="mdi-file-upload" size="48" color="grey-lighten-2" />
+          <p class="text-caption text-grey-lighten-1 mt-2">File Upload</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { FormElement } from '../types/form';
+import { ref } from "vue";
+import type { FormElement } from "../types/form";
+import BaseTextField from "./Elements/BaseTextField.vue";
+import BaseTextArea from "./Elements/BaseTextArea.vue";
+import BaseDatePicker from "./Elements/BaseDatePicker.vue";
 
 interface Props {
   element: FormElement;
@@ -128,27 +145,30 @@ const emit = defineEmits<{
   select: [element: FormElement];
   duplicate: [elementId: string];
   delete: [elementId: string];
-  'drag-start': [elementId: string];
-  'drag-end': [];
+  "drag-start": [elementId: string];
+  "drag-end": [];
 }>();
 
 const isDragging = ref(false);
 
 const onDragStart = (event: DragEvent) => {
   if (event.dataTransfer) {
-    event.dataTransfer.setData('application/json', JSON.stringify({
-      type: 'form-element-move',
-      elementId: props.element.id
-    }));
-    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        type: "form-element-move",
+        elementId: props.element.id,
+      })
+    );
+    event.dataTransfer.effectAllowed = "move";
   }
   isDragging.value = true;
-  emit('drag-start', props.element.id);
+  emit("drag-start", props.element.id);
 };
 
 const onDragEnd = () => {
   isDragging.value = false;
-  emit('drag-end');
+  emit("drag-end");
 };
 </script>
 
@@ -164,13 +184,13 @@ const onDragEnd = () => {
 }
 
 .form-element-wrapper:hover {
-  border-color: #E3F2FD;
-  background-color: #FAFAFA;
+  border-color: #e3f2fd;
+  background-color: #fafafa;
 }
 
 .form-element-wrapper.selected {
-  border-color: #1976D2;
-  background-color: #E3F2FD;
+  border-color: #1976d2;
+  background-color: #e3f2fd;
 }
 
 .form-element-wrapper.dragging {
@@ -202,15 +222,16 @@ const onDragEnd = () => {
 
 /* Add visual indicators for width */
 .form-element-wrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, 
-    #1976D2 0%, 
-    #1976D2 var(--width-percentage, 100%), 
+  background: linear-gradient(
+    90deg,
+    #1976d2 0%,
+    #1976d2 var(--width-percentage, 100%),
     transparent var(--width-percentage, 100%)
   );
   opacity: 0;
@@ -279,7 +300,9 @@ const onDragEnd = () => {
 }
 
 .radio-group,
-.checkbox-group {
+.checkbox-group,
+.image-group,
+.file-group {
   margin-bottom: 16px;
 }
 
@@ -287,6 +310,15 @@ const onDragEnd = () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.image-preview,
+.file-preview {
+  text-align: center;
+  padding: 16px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  background-color: #fafafa;
 }
 
 .preview-field {

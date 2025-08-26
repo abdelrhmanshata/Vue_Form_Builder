@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, nextTick } from 'vue';
-import type { Task } from '../types';
+import type { Task } from '../../types';
 
 interface Props {
   editingTask?: Task | null;

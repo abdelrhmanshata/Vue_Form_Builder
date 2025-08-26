@@ -102,8 +102,8 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { useTheme } from "vuetify";
-import TaskColumn from "../components/TaskColumn.vue";
-import TaskDialog from "../components/TaskDialog.vue";
+import TaskColumn from "../components/Todo/TaskColumn.vue";
+import TaskDialog from "../components/Todo/TaskDialog.vue";
 import { useTasks } from "../composables/useTasks";
 import type { Task, Column } from "../types";
 

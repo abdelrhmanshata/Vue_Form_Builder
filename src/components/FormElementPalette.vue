@@ -1,24 +1,29 @@
 <template>
   <v-card class="form-palette" elevation="2">
-    <v-card-title class="d-flex align-center">
-      <v-icon icon="mdi-palette" class="mr-2" />
-      Form Elements
-      <v-chip size="small" color="primary" class="ml-2">
+    <!-- Header -->
+    <v-card-title class="d-flex align-center justify-space-between">
+      <div class="d-flex align-center">
+        <v-icon icon="mdi-palette" class="mr-2" />
+        Form Elements
+      </div>
+      <v-chip size="small" color="primary">
         {{ formElementTemplates.length }}
       </v-chip>
     </v-card-title>
 
+    <!-- Body -->
     <v-card-text class="pa-3">
+      <!-- Search -->
       <v-text-field
         v-model="searchQuery"
         placeholder="Search elements..."
         prepend-inner-icon="mdi-magnify"
         variant="outlined"
         density="compact"
-        class="mb-3"
         clearable
       />
 
+      <!-- Categories -->
       <div class="element-categories">
         <v-chip
           v-for="category in categories"
@@ -26,13 +31,13 @@
           :color="activeCategory === category ? 'primary' : undefined"
           variant="outlined"
           size="small"
-          class="mr-1 mb-2"
-          @click="activeCategory = activeCategory === category ? 'All' : category"
+          @click="toggleCategory(category)"
         >
           {{ category }}
         </v-chip>
       </div>
 
+      <!-- Elements Grid -->
       <div class="element-grid">
         <div
           v-for="template in filteredTemplates"
@@ -42,25 +47,30 @@
           @dragstart="onDragStart($event, template)"
           @dragend="onDragEnd"
         >
-          <v-card
-            class="element-card"
-            :class="{ dragging: isDragging && draggedTemplate?.type === template.type }"
-            elevation="1"
-            hover
-          >
-            <v-card-text class="text-center pa-3">
-              <v-icon :icon="template.icon" size="24" color="primary" class="mb-2" />
-              <div class="text-caption font-weight-medium">
-                {{ template.label }}
-              </div>
-              <div class="text-caption text-grey mt-1">
-                {{ getCategory(template.type) }}
-              </div>
-            </v-card-text>
-          </v-card>
+          <v-hover v-slot="{ isHovering, props: hoverProps }">
+            <v-card
+              class="element-card"
+              v-bind="hoverProps"
+              :class="{
+                dragging: isDragging && draggedTemplate?.type === template.type,
+              }"
+              :elevation="isHovering ? 5 : 1"
+            >
+              <v-card-text class="text-center pa-3">
+                <v-icon :icon="template.icon" size="28" color="primary" class="mb-2" />
+                <div class="text-caption font-weight-medium">
+                  {{ template.label }}
+                </div>
+                <div class="text-caption text-grey mt-1">
+                  {{ getCategory(template.type) }}
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-hover>
         </div>
       </div>
 
+      <!-- Empty State -->
       <div v-if="filteredTemplates.length === 0" class="text-center py-4">
         <v-icon icon="mdi-magnify-remove" size="32" color="grey-lighten-2" class="mb-2" />
         <p class="text-caption text-grey">No elements found</p>
@@ -77,30 +87,34 @@ import type { FormElementTemplate } from "../types/form";
 const isDragging = ref(false);
 const draggedTemplate = ref<FormElementTemplate | null>(null);
 const searchQuery = ref("");
-const activeCategory = ref<string | null>("All");
+const activeCategory = ref<string>("All");
 
+// Categories
 const categories = computed(() => {
-  const uniqueCategories = new Set();
-  formElementTemplates.forEach((template) => {
-    uniqueCategories.add(getCategory(template.type));
-  });
-  return Array.from(["All", ...uniqueCategories]);
+  const unique = new Set<string>();
+  formElementTemplates.forEach((t) => unique.add(getCategory(t.type)));
+  return ["All", ...Array.from(unique)];
 });
 
-const filteredTemplates = computed(() => {
-  if (activeCategory.value == "All") return formElementTemplates;
-  return formElementTemplates.filter((template) => {
+// Filter
+const filteredTemplates = computed(() =>
+  formElementTemplates.filter((t) => {
     const matchesSearch =
-      template.label.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      template.type.toLowerCase().includes(searchQuery.value.toLowerCase());
+      t.label.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      t.type.toLowerCase().includes(searchQuery.value.toLowerCase());
     const matchesCategory =
-      !activeCategory.value || getCategory(template.type) === activeCategory.value;
+      activeCategory.value === "All" || getCategory(t.type) === activeCategory.value;
     return matchesSearch && matchesCategory;
-  });
-});
+  })
+);
+
+// Helpers
+const toggleCategory = (category: string) => {
+  activeCategory.value = activeCategory.value === category ? "All" : category;
+};
 
 const getCategory = (type: string) => {
-  const categoryMap: Record<string, string> = {
+  const map: Record<string, string> = {
     text: "Input Fields",
     email: "Input Fields",
     password: "Input Fields",
@@ -112,32 +126,32 @@ const getCategory = (type: string) => {
     auto_select: "Selection",
     radio: "Selection",
     checkbox: "Selection",
+    upload_image: "Media",
+    upload_file: "Media",
     image: "Media",
-    file: "Media",
   };
-  return categoryMap[type] || "Other";
+  return map[type] || "Other";
 };
 
+// Drag events
 const onDragStart = (event: DragEvent, template: FormElementTemplate) => {
   if (event.dataTransfer) {
     event.dataTransfer.setData(
       "application/json",
-      JSON.stringify({
-        type: "form-element",
-        template,
-      })
+      JSON.stringify({ type: "form-element", template })
     );
     event.dataTransfer.effectAllowed = "copy";
 
-    // Set drag image
     const dragImage = document.createElement("div");
     dragImage.textContent = template.label;
-    dragImage.style.position = "absolute";
-    dragImage.style.background = "rgba(25, 118, 210, 0.9)";
-    dragImage.style.color = "white";
-    dragImage.style.padding = "8px 12px";
-    dragImage.style.borderRadius = "4px";
-    dragImage.style.fontSize = "14px";
+    dragImage.style.cssText = `
+      position: absolute;
+      background: rgba(25, 118, 210, 0.9);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+    `;
     document.body.appendChild(dragImage);
     event.dataTransfer.setDragImage(dragImage, -10, -10);
     setTimeout(() => document.body.removeChild(dragImage), 0);
@@ -154,62 +168,45 @@ const onDragEnd = () => {
 
 <style scoped>
 .form-palette {
-  height: fit-content;
   position: sticky;
+  top: 16px;
   max-height: 100vh;
   overflow-y: auto;
+  border-radius: 12px;
 }
 
 .element-categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 12px;
 }
 
 .element-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
 }
 
 .element-item {
   cursor: grab;
   transition: transform 0.2s ease;
 }
-
 .element-item:active {
   cursor: grabbing;
 }
 
-.element-item:hover {
-  transform: translateY(-2px);
-}
-
 .element-card {
-  transition: all 0.2s ease;
-  border-radius: 8px !important;
-  height: 100%;
+  transition: all 0.25s ease;
+  border-radius: 10px !important;
 }
 
-.element-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
+/* .element-card:hover {
+  background-color: red;
+} */
 
 .element-card.dragging {
   opacity: 0.6;
   transform: scale(0.95);
-}
-
-@media (max-width: 960px) {
-  .element-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .element-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 </style>

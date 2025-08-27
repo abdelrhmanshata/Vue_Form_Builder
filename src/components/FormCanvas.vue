@@ -3,8 +3,8 @@
     <v-card-title class="d-flex align-center justify-space-between">
       <div class="d-flex align-center">
         <v-icon icon="mdi-form-select" class="mr-2" />
-        Form Canvas
-        <v-chip v-if="elements.length > 0" size="small" color="primary" class="ml-2">
+        <p class="text-wrap">Form Canvas</p>
+        <v-chip v-if="elements.length > 0" size="small" color="primary" class="mx-2">
           {{ elements.length }} elements
         </v-chip>
       </div>
@@ -43,7 +43,7 @@
 
     <v-card-text class="canvas-content">
       <!-- Form Header -->
-      <div class="form-header mb-6">
+      <div class="form-header mb-5">
         <v-text-field
           :model-value="form?.title"
           label="Form Title"
@@ -103,31 +103,14 @@
           </template>
         </div>
       </div>
-
-      <!-- Canvas Footer -->
-      <div v-if="elements.length > 0" class="canvas-footer mt-4">
-        <v-alert type="info" density="compact" class="mb-0">
-          <div class="d-flex align-center justify-space-between">
-            <span>Form contains {{ elements.length }} elements</span>
-            <v-btn
-              size="small"
-              variant="outlined"
-              @click="$emit('preview')"
-              prepend-icon="mdi-eye"
-            >
-              Preview
-            </v-btn>
-          </div>
-        </v-alert>
-      </div>
     </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import FormElementRenderer from "./FormElementRenderer.vue";
-import type { FormElement, FormConfig, FormElementTemplate } from "../types/form";
+import FormElementRenderer from "@/components/FormElementRenderer.vue";
+import type { FormElement, FormConfig, FormElementTemplate } from "@/types/form";
 
 interface Props {
   form: FormConfig | null;

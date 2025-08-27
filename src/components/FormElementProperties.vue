@@ -11,39 +11,43 @@
     <v-card-text>
       <div v-if="element" class="properties-form">
         <!-- Basic Properties Section -->
-        <v-expansion-panels variant="accordion" class="mb-3" v-model="expandedPanels">
+        <v-expansion-panels
+          variant="accordion"
+          class="mb-3"
+          v-model="expandedPanels"
+          multiple
+        >
           <v-expansion-panel value="basic">
-            <v-expansion-panel-title>
+            <v-expansion-panel-title class="gap-2">
               <v-icon icon="mdi-tune" class="mr-2" />
               Basic Properties
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <v-text-field
-                :model-value="element.label"
+                v-model="element.label"
                 label="Label"
                 variant="outlined"
                 density="compact"
-                class="mb-3"
+                clearable
                 @update:model-value="updateProperty('label', $event)"
               />
 
+              <!-- v-if="hasPlaceholder" -->
               <v-text-field
-                v-if="hasPlaceholder"
-                :model-value="element.placeholder"
+                v-model="element.placeholder"
                 label="Placeholder"
                 variant="outlined"
                 density="compact"
-                class="mb-3"
+                clearable
                 @update:model-value="updateProperty('placeholder', $event)"
               />
 
               <v-select
-                :model-value="element.width"
+                v-model="element.width"
                 :items="widthOptions"
                 label="Width"
                 variant="outlined"
                 density="compact"
-                class="mb-3"
                 @update:model-value="updateProperty('width', $event)"
               />
 
@@ -56,8 +60,9 @@
                   @update:model-value="updateProperty('newRow', $event)"
                 />
 
+                <!-- :model-value="element.required" -->
                 <v-switch
-                  :model-value="element.required"
+                  v-model="element.required"
                   label="Required Field"
                   color="primary"
                   density="compact"
@@ -145,7 +150,36 @@
             <v-expansion-panel-text>
               <!-- Image Properties -->
               <div v-if="element.type === 'image'">
+                <v-file-input
+                  v-model="element.file"
+                  label="Image"
+                  placeholder="Select Image"
+                  prepend-icon=""
+                  prepend-inner-icon="mdi-image-plus"
+                  accept="image/*"
+                  color="primary"
+                  icon-color="primary"
+                  variant="outlined"
+                  density="compact"
+                  show-size
+                  clearable
+                  chips
+                >
+                </v-file-input>
+
                 <v-text-field
+                  v-model="element.url"
+                  label="Image URL"
+                  placeholder="https://example.com/image.jpg"
+                  color="primary"
+                  density="compact"
+                  variant="outlined"
+                  icon-color="primary"
+                  prepend-inner-icon="mdi-link"
+                  clearable
+                />
+
+                <!-- <v-text-field
                   :model-value="element.src"
                   label="Image URL"
                   variant="outlined"
@@ -153,7 +187,7 @@
                   class="mb-3"
                   @update:model-value="updateProperty('src', $event)"
                   placeholder="https://example.com/image.jpg"
-                />
+                /> -->
                 <v-text-field
                   :model-value="element.alt"
                   label="Alt Text"

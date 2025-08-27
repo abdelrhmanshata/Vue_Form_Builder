@@ -32,7 +32,9 @@ export interface FormElement {
   multiple?: boolean; // For select/multiDropdown
   inline?: boolean; // For radio/checkbox
   maxFiles?: number;// For image
-  src?: string; // For image
+  file?: any; // For image
+  url?: string; // For image
+  src?: any; // For image
   alt?: string; // For image
   minDate?: string; // For calendar
   maxDate?: string; // For calendar

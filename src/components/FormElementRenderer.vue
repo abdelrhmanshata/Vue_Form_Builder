@@ -2,8 +2,8 @@
   <div
     class="form-element-wrapper"
     :class="{
-      selected: isSelected,
-      dragging: isDragging,
+        selected: isSelected,
+        dragging: isDragging,
       [`width-${element.width}`]: true,
     }"
     @click="$emit('select', element)"
@@ -29,6 +29,8 @@
     </div>
 
     <div class="form-element">
+      <!-- {{ element }} -->
+
       <!-- Text Input -->
       <BaseTextField
         v-if="['text', 'email', 'number', 'date'].includes(element.type)"
@@ -57,10 +59,13 @@
       <BaseCheckboxGroup v-else-if="element.type === 'checkbox'" :element="element" />
 
       <!-- Image -->
-      <BaseImageUpload v-else-if="element.type === 'image'" :element="element" />
+      <BaseImageUpload v-else-if="element.type === 'upload_image'" :element="element" />
 
       <!-- File Upload -->
-      <BaseFileUpload v-else-if="element.type === 'file'" :element="element" />
+      <BaseFileUpload v-else-if="element.type === 'upload_file'" :element="element" />
+
+      <!-- Image -->
+      <BaseImageField v-else-if="element.type === 'image'" :element="element" />
     </div>
   </div>
 </template>
@@ -77,6 +82,8 @@ import BaseRadioGroup from "@/components/Elements/BaseRadioGroup.vue";
 import BaseAutocompleteField from "@/components/Elements/BaseAutocompleteField.vue";
 import BaseImageUpload from "@/components/Elements/BaseImageUpload.vue";
 import BaseFileUpload from "@/components/Elements/BaseFileUpload.vue";
+import BaseImageField from "@/components/Elements/BaseImageField.vue";
+//
 
 interface Props {
   element: FormElement;

@@ -95,7 +95,7 @@
 
                     <!-- Image Upload -->
                     <BaseImageUpload
-                      v-else-if="element.type === 'image'"
+                      v-else-if="element.type === 'upload_image'"
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
@@ -103,10 +103,16 @@
 
                     <!-- File Upload -->
                     <BaseFileUpload
-                      v-else-if="element.type === 'file'"
+                      v-else-if="element.type === 'upload_file'"
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                    />
+
+                    <!-- Image -->
+                    <BaseImageField
+                      v-else-if="element.type === 'image'"
+                      :element="element"
                     />
                   </div>
                 </div>
@@ -167,6 +173,7 @@ import BaseRadioGroup from "@/components/Elements/BaseRadioGroup.vue";
 import BaseAutocompleteField from "@/components/Elements/BaseAutocompleteField.vue";
 import BaseImageUpload from "@/components/Elements/BaseImageUpload.vue";
 import BaseFileUpload from "@/components/Elements/BaseFileUpload.vue";
+import BaseImageField from "@/components/Elements/BaseImageField.vue";
 
 interface Props {
   modelValue: boolean;

@@ -129,9 +129,9 @@ export const formElementTemplates: FormElementTemplate[] = [
     },
     // Media
     {
-        type: 'image',
+        type: 'upload_image',
         label: 'Image Upload',
-        icon: 'mdi-image',
+        icon: 'mdi-image-plus',
         defaultProps: {
             label: 'Upload Image',
             multiple: true,
@@ -142,7 +142,7 @@ export const formElementTemplates: FormElementTemplate[] = [
         }
     },
     {
-        type: 'file',
+        type: 'upload_file',
         label: 'File Upload',
         icon: 'mdi-file-upload',
         defaultProps: {
@@ -153,5 +153,18 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             maxFiles: 3, // Maximum 3 files
         }
-    }
+    },
+    {
+        type: 'image',
+        label: 'Image',
+        icon: 'mdi-image',
+        defaultProps: {
+            label: 'Image',
+            file: null,
+            url: "",
+            required: false,
+            width: 'full',
+            newRow: false,
+        }
+    },
 ];

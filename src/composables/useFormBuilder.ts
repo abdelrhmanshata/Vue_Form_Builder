@@ -47,7 +47,8 @@ export function useFormBuilder() {
 
   const createNewForm = () => {
     const newForm: FormConfig = {
-      id: `form-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      // id: `form-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `test-form`,
       title: 'Untitled Form',
       description: 'Form description',
       elements: [],
@@ -55,7 +56,8 @@ export function useFormBuilder() {
       updatedAt: new Date()
     };
 
-    forms.value.push(newForm);
+    // forms.value.push(newForm);
+    forms.value = [newForm];
     currentForm.value = newForm;
     saveForms(forms.value);
     return newForm;

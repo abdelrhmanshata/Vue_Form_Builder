@@ -12,7 +12,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             placeholder: 'Enter text...',
             required: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            validation: {}
         }
     },
     {
@@ -24,7 +25,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             placeholder: 'Enter your message...',
             required: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            validation: {}
         }
     },
     {
@@ -37,6 +39,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
+            validation: {}
         }
     },
     {
@@ -48,7 +51,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             placeholder: 'Enter email...',
             required: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            validation: {}
         }
     },
     // Date Inputs
@@ -60,7 +64,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             label: 'Date',
             required: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            validation: {}
         }
     },
     {
@@ -70,8 +75,10 @@ export const formElementTemplates: FormElementTemplate[] = [
         defaultProps: {
             label: 'Date',
             required: false,
+            multiple: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            validation: {}
         }
     },
     // Select Inputs
@@ -85,7 +92,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
-            options: ['Option 1', 'Option 2', 'Option 3']
+            options: ['Option 1', 'Option 2', 'Option 3'],
+            validation: {}
         }
     },
     {
@@ -98,7 +106,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
-            options: ['Option 1', 'Option 2', 'Option 3']
+            options: ['Option 1', 'Option 2', 'Option 3'],
+            validation: {}
         }
     },
     {
@@ -111,7 +120,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
-            options: ['Option 1', 'Option 2', 'Option 3']
+            options: ['Option 1', 'Option 2', 'Option 3'],
+            validation: {}
         }
     },
     {
@@ -124,7 +134,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
-            options: ['Option 1', 'Option 2']
+            options: ['Option 1', 'Option 2'],
+            validation: {}
         }
     },
     // Media
@@ -138,7 +149,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
-            maxFiles: 3, // Maximum 3 files
+            maxFiles: 3, // Maximum 3 files,
+            validation: {}
         }
     },
     {
@@ -151,7 +163,8 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
-            maxFiles: 3, // Maximum 3 files
+            maxFiles: 3, // Maximum 3 files,
+            validation: {}
         }
     },
     {
@@ -165,6 +178,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             required: false,
             width: 'full',
             newRow: false,
+            validation: {}
         }
     },
 ];

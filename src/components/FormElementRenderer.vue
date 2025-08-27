@@ -2,8 +2,8 @@
   <div
     class="form-element-wrapper"
     :class="{
-        selected: isSelected,
-        dragging: isDragging,
+      selected: isSelected,
+      dragging: isDragging,
       [`width-${element.width}`]: true,
     }"
     @click="$emit('select', element)"
@@ -29,7 +29,7 @@
     </div>
 
     <div class="form-element">
-      <!-- {{ element }} -->
+      {{ element }}
 
       <!-- Text Input -->
       <BaseTextField

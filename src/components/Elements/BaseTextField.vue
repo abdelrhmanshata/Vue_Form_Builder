@@ -4,13 +4,16 @@
     :type="element.type"
     :placeholder="element.placeholder"
     :required="element.required"
-    :rules="rules"
+    :rules="computedRules"
     :prepend-inner-icon="fieldIcon"
     color="primary"
     icon-color="primary"
     variant="outlined"
     density="comfortable"
     clearable
+    :counter="element.validation?.maxLength"
+    :min="element.type === 'date' ? element.validation?.minDate : element.validation?.min"
+    :max="element.type === 'date' ? element.validation?.maxDate : element.validation?.max"
   >
     <template #label>
       <span>
@@ -23,6 +26,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
+import type { FormValidation } from "@/types/form";
 
 interface ElementProps {
   id: string | number;
@@ -30,6 +34,7 @@ interface ElementProps {
   label?: string;
   placeholder?: string;
   required?: boolean;
+  validation?: FormValidation;
 }
 
 const props = defineProps<{
@@ -55,6 +60,38 @@ const fieldIcon = computed(() => {
   return iconByType[props.element.type] || "mdi-form-textbox";
 });
 
+//
+const computedRules = computed(() => {
+  const baseRules = props.rules ? [...props.rules] : [];
+  const v = props.element.validation;
+
+  if (!v) return baseRules;
+
+  const validations: Array<(val: string) => true | string> = [];
+
+  if (v.required) {
+    validations.push((val) => !!val || "This field is required");
+  }
+
+  if (v.minLength) {
+    validations.push(
+      (val) => (val && val.length >= v.minLength) || `Min ${v.minLength} characters`
+    );
+  }
+
+  if (v.maxLength) {
+    validations.push(
+      (val) => !val || val.length <= v.maxLength || `Max ${v.maxLength} characters`
+    );
+  }
+
+  // if (v.pattern) {
+  //   const regex = new RegExp(v.pattern);
+  //   validations.push((val) => !val || regex.test(val) || "Invalid format");
+  // }
+
+  return [...baseRules, ...validations];
+});
 // update from parent
 watch(
   () => props.modelValue,

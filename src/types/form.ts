@@ -1,10 +1,11 @@
 
 export interface FormValidation {
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string;
-  min?: number;
-  max?: number;
+  minLength?: number;// ForText
+  maxLength?: number;// ForText
+  min?: number;      // For Number
+  max?: number;      // For Number
+  minDate?: string;  // For Date
+  maxDate?: string;  // For Date
 }
 
 export interface FormElementDependency {
@@ -25,7 +26,7 @@ export interface FormElement {
   newRow: boolean;
   position: number;
   options?: string[];
-  validation?: FormValidation;
+  validation: FormValidation;
   dependencies?: FormElementDependency[];
   value?: any;
   // Specific properties for different element types

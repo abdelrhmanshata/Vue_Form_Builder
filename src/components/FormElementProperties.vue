@@ -10,6 +10,7 @@
 
     <v-card-text>
       <div v-if="element" class="properties-form">
+        {{ element }}
         <!-- Basic Properties Section -->
         <v-expansion-panels
           variant="accordion"
@@ -32,8 +33,8 @@
                 @update:model-value="updateProperty('label', $event)"
               />
 
-              <!-- v-if="hasPlaceholder" -->
               <v-text-field
+                v-if="hasPlaceholder"
                 v-model="element.placeholder"
                 label="Placeholder"
                 variant="outlined"
@@ -51,20 +52,19 @@
                 @update:model-value="updateProperty('width', $event)"
               />
 
-              <div class="d-flex gap-3">
+              <div class="d-flex flex-wrap gap-3">
                 <v-switch
-                  :model-value="element.newRow"
+                  v-model="element.newRow"
                   label="Start New Row"
                   color="primary"
                   density="compact"
                   @update:model-value="updateProperty('newRow', $event)"
                 />
 
-                <!-- :model-value="element.required" -->
                 <v-switch
                   v-model="element.required"
-                  label="Required Field"
-                  color="primary"
+                  label="Required"
+                  color="red"
                   density="compact"
                   @update:model-value="updateProperty('required', $event)"
                 />
@@ -141,11 +141,11 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
 
-          <!-- Type-Specific Properties -->
-          <v-expansion-panel value="typeSpecific" v-if="hasTypeSpecificProperties">
+          <!-- Type-Image Properties -->
+          <v-expansion-panel value="typeImage" v-if="hasTypeImage">
             <v-expansion-panel-title>
-              <v-icon :icon="typeSpecificIcon" class="mr-2" />
-              {{ typeSpecificTitle }}
+              <v-icon icon="mdi-image" class="mr-2" />
+              Image Properties
             </v-expansion-panel-title>
             <v-expansion-panel-text>
               <!-- Image Properties -->
@@ -179,15 +179,6 @@
                   clearable
                 />
 
-                <!-- <v-text-field
-                  :model-value="element.src"
-                  label="Image URL"
-                  variant="outlined"
-                  density="compact"
-                  class="mb-3"
-                  @update:model-value="updateProperty('src', $event)"
-                  placeholder="https://example.com/image.jpg"
-                /> -->
                 <v-text-field
                   :model-value="element.alt"
                   label="Alt Text"
@@ -195,27 +186,6 @@
                   density="compact"
                   @update:model-value="updateProperty('alt', $event)"
                   placeholder="Description of the image"
-                />
-              </div>
-
-              <!-- Date Properties -->
-              <div v-if="element.type === 'date'">
-                <v-text-field
-                  :model-value="element.minDate"
-                  label="Min Date"
-                  type="date"
-                  variant="outlined"
-                  density="compact"
-                  class="mb-3"
-                  @update:model-value="updateProperty('minDate', $event)"
-                />
-                <v-text-field
-                  :model-value="element.maxDate"
-                  label="Max Date"
-                  type="date"
-                  variant="outlined"
-                  density="compact"
-                  @update:model-value="updateProperty('maxDate', $event)"
                 />
               </div>
             </v-expansion-panel-text>
@@ -232,66 +202,85 @@
                 <!-- Text validation -->
                 <template v-if="['text', 'textarea'].includes(element.type)">
                   <v-text-field
-                    :model-value="element.validation?.minLength || ''"
+                    v-model.number="element.validation.minLength"
                     label="Minimum Length"
                     type="number"
+                    min="0"
                     variant="outlined"
                     density="compact"
-                    class="mb-3"
-                    @update:model-value="
-                      updateValidation('minLength', $event ? parseInt($event) : undefined)
-                    "
-                    min="0"
+                    clearable
                   />
-
                   <v-text-field
-                    :model-value="element.validation?.maxLength || ''"
+                    v-model.number="element.validation.maxLength"
                     label="Maximum Length"
                     type="number"
+                    :min="element?.validation?.minLength ?? 1"
                     variant="outlined"
                     density="compact"
-                    class="mb-3"
-                    @update:model-value="
-                      updateValidation('maxLength', $event ? parseInt($event) : undefined)
-                    "
-                    min="1"
-                  />
-
-                  <v-text-field
-                    :model-value="element.validation?.pattern || ''"
-                    label="Pattern (Regex)"
-                    variant="outlined"
-                    density="compact"
-                    class="mb-3"
-                    @update:model-value="updateValidation('pattern', $event || undefined)"
-                    placeholder="^[a-zA-Z0-9]+$"
+                    clearable
                   />
                 </template>
 
                 <!-- Number validation -->
                 <template v-if="element.type === 'number'">
                   <v-text-field
-                    :model-value="element.validation?.min || ''"
+                    v-model.number="element.validation.min"
                     label="Minimum Value"
                     type="number"
                     variant="outlined"
                     density="compact"
-                    class="mb-3"
-                    @update:model-value="
-                      updateValidation('min', $event ? parseFloat($event) : undefined)
-                    "
+                    clearable
                   />
 
                   <v-text-field
-                    :model-value="element.validation?.max || ''"
+                    v-model.number="element.validation.max"
                     label="Maximum Value"
                     type="number"
+                    :min="element?.validation?.min ?? 0"
                     variant="outlined"
                     density="compact"
-                    class="mb-3"
-                    @update:model-value="
-                      updateValidation('max', $event ? parseFloat($event) : undefined)
-                    "
+                    clearable
+                  />
+                </template>
+
+                <!-- Date Properties -->
+                <template v-if="['date', 'date_picker'].includes(element.type)">
+                  <v-switch
+                    v-if="element.type === 'date_picker'"
+                    v-model="element.multiple"
+                    color="primary"
+                    density="compact"
+                  >
+                    <template #label>
+                      <v-icon
+                        start
+                        class="mx-1"
+                        :color="element.multiple ? 'green' : 'grey'"
+                        icon="mdi-calendar-multiselect"
+                      />
+                      Multiple Selection
+                    </template>
+                  </v-switch>
+
+                  <v-text-field
+                    v-model="element.validation.minDate"
+                    label="Min Date"
+                    type="date"
+                    prepend-inner-icon="mdi-calendar-start-outline"
+                    color="primary"
+                    icon-color="primary"
+                    variant="outlined"
+                    density="compact"
+                  />
+                  <v-text-field
+                    v-model="element.validation.maxDate"
+                    label="Max Date"
+                    type="date"
+                    prepend-inner-icon="mdi-calendar-end-outline"
+                    color="primary"
+                    icon-color="primary"
+                    variant="outlined"
+                    density="compact"
                   />
                 </template>
               </div>
@@ -452,7 +441,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import type { FormElement, FormElementDependency } from "../types/form";
+import type { FormElement, FormElementDependency } from "@/types/form";
 
 interface Props {
   element: FormElement | null;
@@ -534,22 +523,26 @@ const hasOptions = computed(() => {
 
 const hasValidation = computed(() => {
   if (!props.element) return false;
-  return ["text", "email", "textarea", "number"].includes(props.element.type);
+  return ["text", "number", "textarea", "date", "date_picker"].includes(
+    props.element.type
+  );
 });
 
-const hasTypeSpecificProperties = computed(() => {
+const hasTypeImage = computed(() => {
   if (!props.element) return false;
-  return ["image", "date"].includes(props.element.type);
+  return ["image"].includes(props.element.type);
 });
 
 const typeSpecificIcon = computed(() => {
   if (!props.element) return "mdi-cog";
-  return props.element.type === "image" ? "mdi-image" : "mdi-calendar";
+  return "mdi-image";
+  // return props.element.type === "image" ? "mdi-image" : "mdi-calendar";
 });
 
 const typeSpecificTitle = computed(() => {
   if (!props.element) return "";
-  return props.element.type === "image" ? "Image Properties" : "Date Range";
+  return "Image Properties";
+  // return  props.element.type === "image" ? "Image Properties" : "Date Range";
 });
 
 const availableDependencies = computed(() => {

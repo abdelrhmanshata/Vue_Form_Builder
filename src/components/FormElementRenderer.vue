@@ -41,98 +41,42 @@
       <BaseDatePicker v-else-if="element.type === 'date_picker'" :element="element" />
 
       <!-- Select -->
-      <v-select
-        v-else-if="element.type === 'select'"
-        :label="element.label"
-        :items="element.options || []"
-        :required="element.required"
-        variant="outlined"
-        class="preview-field"
-        readonly
-        clearable
-      />
-
       <!-- Multi Select -->
-      <v-select
-        v-else-if="element.type === 'multiselect'"
-        :label="element.label"
-        :items="element.options || []"
-        :required="element.required"
-        variant="outlined"
-        class="preview-field"
-        readonly
-        multiple
-        chips
+      <BaseSelectField v-else-if="element.type === 'select'" :element="element" />
+
+      <!-- Auto Complete -->
+      <BaseAutocompleteField
+        v-else-if="element.type === 'auto_select'"
+        :element="element"
       />
 
       <!-- Radio Buttons -->
-      <div v-else-if="element.type === 'radio'" class="radio-group">
-        <label class="field-label">
-          {{ element.label }}
-          <span v-if="element.required" class="required">*</span>
-        </label>
-        <v-radio-group readonly class="preview-field">
-          <v-radio
-            v-for="option in element.options || []"
-            :key="option"
-            :label="option"
-            :value="option"
-            disabled
-          />
-        </v-radio-group>
-      </div>
+      <BaseRadioGroup v-else-if="element.type === 'radio'" :element="element" />
 
       <!-- Checkboxes -->
-      <div v-else-if="element.type === 'checkbox'" class="checkbox-group">
-        <label class="field-label">
-          {{ element.label }}
-          <span v-if="element.required" class="required">*</span>
-        </label>
-        <div class="checkbox-options">
-          <v-checkbox
-            v-for="option in element.options || []"
-            :key="option"
-            :label="option"
-            :value="option"
-            disabled
-            class="preview-field"
-          />
-        </div>
-      </div>
+      <BaseCheckboxGroup v-else-if="element.type === 'checkbox'" :element="element" />
 
       <!-- Image -->
-      <div v-else-if="element.type === 'image'" class="image-group">
-        <label class="field-label">
-          {{ element.label }}
-          <span v-if="element.required" class="required">*</span>
-        </label>
-        <div class="image-preview">
-          <v-icon icon="mdi-image" size="48" color="grey-lighten-2" />
-          <p class="text-caption text-grey-lighten-1 mt-2">Image Upload</p>
-        </div>
-      </div>
+      <BaseImageUpload v-else-if="element.type === 'image'" :element="element" />
 
       <!-- File Upload -->
-      <div v-else-if="element.type === 'file'" class="file-group">
-        <label class="field-label">
-          {{ element.label }}
-          <span v-if="element.required" class="required">*</span>
-        </label>
-        <div class="file-preview">
-          <v-icon icon="mdi-file-upload" size="48" color="grey-lighten-2" />
-          <p class="text-caption text-grey-lighten-1 mt-2">File Upload</p>
-        </div>
-      </div>
+      <BaseFileUpload v-else-if="element.type === 'file'" :element="element" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import type { FormElement } from "../types/form";
-import BaseTextField from "./Elements/BaseTextField.vue";
-import BaseTextArea from "./Elements/BaseTextArea.vue";
-import BaseDatePicker from "./Elements/BaseDatePicker.vue";
+import type { FormElement } from "@/types/form";
+import BaseTextField from "@/components/Elements/BaseTextField.vue";
+import BaseTextArea from "@/components/Elements/BaseTextArea.vue";
+import BaseDatePicker from "@/components/Elements/BaseDatePicker.vue";
+import BaseSelectField from "@/components/Elements/BaseSelectField.vue";
+import BaseCheckboxGroup from "@/components/Elements/BaseCheckboxGroup.vue";
+import BaseRadioGroup from "@/components/Elements/BaseRadioGroup.vue";
+import BaseAutocompleteField from "@/components/Elements/BaseAutocompleteField.vue";
+import BaseImageUpload from "@/components/Elements/BaseImageUpload.vue";
+import BaseFileUpload from "@/components/Elements/BaseFileUpload.vue";
 
 interface Props {
   element: FormElement;
@@ -275,61 +219,15 @@ const onDragEnd = () => {
 
 .element-controls {
   position: absolute;
+  display: flex;
   top: 4px;
   right: 4px;
-  display: flex;
-  gap: 4px;
   z-index: 10;
+  margin: 4px;
 }
 
 .form-element {
   pointer-events: none;
   width: 100%;
-}
-
-.field-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.87);
-  margin-bottom: 8px;
-}
-
-.required {
-  color: #f44336;
-}
-
-.radio-group,
-.checkbox-group,
-.image-group,
-.file-group {
-  margin-bottom: 16px;
-}
-
-.checkbox-options {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.image-preview,
-.file-preview {
-  text-align: center;
-  padding: 16px;
-  border: 2px dashed #e0e0e0;
-  border-radius: 8px;
-  background-color: #fafafa;
-}
-
-.preview-field {
-  pointer-events: none;
-}
-
-:deep(.v-input--disabled) {
-  opacity: 0.8;
-}
-
-:deep(.v-field--disabled) {
-  opacity: 0.8;
 }
 </style>

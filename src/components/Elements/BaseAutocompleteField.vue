@@ -1,9 +1,9 @@
 <template>
-  <v-text-field
+  <v-autocomplete
     v-model="internalValue"
-    :type="element.type"
-    :placeholder="element.placeholder"
+    :items="element.options || []"
     :required="element.required"
+    :multiple="element.multiple"
     :rules="rules"
     :prepend-inner-icon="fieldIcon"
     color="primary"
@@ -11,6 +11,7 @@
     variant="outlined"
     density="comfortable"
     clearable
+    chips
   >
     <template #label>
       <span>
@@ -18,7 +19,7 @@
         {{ element.label }}
       </span>
     </template>
-  </v-text-field>
+  </v-autocomplete>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +31,8 @@ interface ElementProps {
   label?: string;
   placeholder?: string;
   required?: boolean;
+  options?: string[];
+  multiple?: boolean;
 }
 
 const props = defineProps<{
@@ -44,15 +47,9 @@ const emit = defineEmits<{
 
 // internal state
 const internalValue = ref(props.modelValue);
-const iconByType: Record<string, string> = {
-  text: "mdi-text-box-outline",
-  email: "mdi-email-outline",
-  number: "mdi-numeric",
-  date: "mdi-calendar",
-};
 
 const fieldIcon = computed(() => {
-  return iconByType[props.element.type] || "mdi-form-textbox";
+  return props.element.multiple ? "mdi-select-multiple" : "mdi-select";
 });
 
 // update from parent

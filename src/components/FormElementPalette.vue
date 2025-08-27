@@ -109,7 +109,7 @@ const getCategory = (type: string) => {
     date: "Input Fields",
     date_picker: "Input Fields",
     select: "Selection",
-    multiselect: "Selection",
+    auto_select: "Selection",
     radio: "Selection",
     checkbox: "Selection",
     image: "Media",

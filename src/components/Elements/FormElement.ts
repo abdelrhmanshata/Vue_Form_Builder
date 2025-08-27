@@ -78,9 +78,10 @@ export const formElementTemplates: FormElementTemplate[] = [
     {
         type: 'select',
         label: 'Select Dropdown',
-        icon: 'mdi-menu-down',
+        icon: 'mdi-format-list-bulleted',
         defaultProps: {
             label: 'Select Option',
+            multiple: false,
             required: false,
             width: 'full',
             newRow: false,
@@ -88,15 +89,15 @@ export const formElementTemplates: FormElementTemplate[] = [
         }
     },
     {
-        type: 'multiselect',
-        label: 'Multi Select',
-        icon: 'mdi-menu-down',
+        type: 'auto_select',
+        label: 'Auto Complete',
+        icon: 'mdi-list-box-outline',
         defaultProps: {
-            label: 'Select Options',
+            label: 'Auto Complete',
+            multiple: false,
             required: false,
             width: 'full',
             newRow: false,
-            multiple: true,
             options: ['Option 1', 'Option 2', 'Option 3']
         }
     },
@@ -106,6 +107,7 @@ export const formElementTemplates: FormElementTemplate[] = [
         icon: 'mdi-radiobox-marked',
         defaultProps: {
             label: 'Radio Options',
+            inline: false,
             required: false,
             width: 'full',
             newRow: false,
@@ -118,21 +120,25 @@ export const formElementTemplates: FormElementTemplate[] = [
         icon: 'mdi-checkbox-marked',
         defaultProps: {
             label: 'Checkbox Option',
+            inline: false,
             required: false,
             width: 'full',
             newRow: false,
             options: ['Option 1', 'Option 2']
         }
     },
+    // Media
     {
         type: 'image',
         label: 'Image Upload',
         icon: 'mdi-image',
         defaultProps: {
             label: 'Upload Image',
+            multiple: true,
             required: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            maxFiles: 3, // Maximum 3 files
         }
     },
     {
@@ -141,9 +147,11 @@ export const formElementTemplates: FormElementTemplate[] = [
         icon: 'mdi-file-upload',
         defaultProps: {
             label: 'Upload File',
+            multiple: true,
             required: false,
             width: 'full',
-            newRow: false
+            newRow: false,
+            maxFiles: 3, // Maximum 3 files
         }
     }
 ];

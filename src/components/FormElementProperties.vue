@@ -67,13 +67,28 @@
 
               <!-- Multiple Selection for select elements -->
               <v-switch
-                v-if="element.type === 'select' || element.type === 'multiselect'"
+                v-if="
+                  element.type === 'select' ||
+                  element.type === 'multiselect' ||
+                  element.type === 'auto_select'
+                "
                 :model-value="element.multiple"
                 label="Multiple Selection"
                 color="primary"
                 density="compact"
                 class="mb-3"
                 @update:model-value="updateProperty('multiple', $event)"
+              />
+
+              <!-- Multiple Selection for select elements -->
+              <v-switch
+                v-if="element.type === 'radio' || element.type === 'checkbox'"
+                :model-value="element.inline"
+                label="Inline Selection"
+                color="primary"
+                density="compact"
+                class="mb-3"
+                @update:model-value="updateProperty('inline', $event)"
               />
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -475,7 +490,7 @@ const actionOptions = [
 
 const hasPlaceholder = computed(() => {
   if (!props.element) return false;
-  return ["text",'email', "number", "textarea"].includes(props.element.type);
+  return ["text", "email", "number", "textarea"].includes(props.element.type);
 });
 
 const hasOptions = computed(() => {
@@ -485,7 +500,7 @@ const hasOptions = computed(() => {
 
 const hasValidation = computed(() => {
   if (!props.element) return false;
-  return ["text",'email', "textarea", "number"].includes(props.element.type);
+  return ["text", "email", "textarea", "number"].includes(props.element.type);
 });
 
 const hasTypeSpecificProperties = computed(() => {

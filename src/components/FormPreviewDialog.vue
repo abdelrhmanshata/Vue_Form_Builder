@@ -15,15 +15,15 @@
       <v-card-text class="pa-6">
         <div v-if="form" class="form-preview">
           <!-- Form Header -->
-          <div class="preview-header text-center mb-6">
-            <h2 class="text-h4 mb-2 primary--text">{{ form.title }}</h2>
+          <div class="text-center mb-5">
+            <h2 class="text-h4 mb-2 text-primary">{{ form.title }}</h2>
             <p v-if="form.description" class="text-body-1 mb-6 text-grey-darken-1">
               {{ form.description }}
             </p>
-            <v-divider class="my-4" />
+            <v-divider class="my-5" />
           </div>
 
-          <v-form ref="previewForm" v-model="isValid" class="preview-form">
+          <v-form ref="previewForm" v-model="isValid">
             <div class="form-preview-container">
               <template
                 v-for="(row, rowIndex) in previewElementRows"
@@ -41,7 +41,7 @@
                       v-if="['text', 'email', 'number', 'date'].includes(element.type)"
                       v-model="formData[element.id]"
                       :element="element"
-                      :rules="getValidationRules(element)"
+                      :rules="getValidationRules(element) || []"
                     />
 
                     <!-- Textarea -->
@@ -49,7 +49,7 @@
                       v-else-if="element.type === 'textarea'"
                       v-model="formData[element.id]"
                       :element="element"
-                      :rules="getValidationRules(element)"
+                      :rules="getValidationRules(element) || []"
                     />
 
                     <!-- Date Picker -->
@@ -57,132 +57,70 @@
                       v-else-if="element.type === 'date_picker'"
                       v-model="formData[element.id]"
                       :element="element"
-                      :rules="
-                        element.required ? [(v) => !!v || 'This field is required'] : []
-                      "
+                      :rules="getValidationRules(element) || []"
                     />
 
                     <!-- Select -->
-                    <v-select
-                      v-else-if="element.type === 'select'"
+                    <!-- Multi Select -->
+                    <BaseSelectField
+                      v-if="element.type === 'select'"
                       v-model="formData[element.id]"
-                      :label="element.label"
-                      :items="element.options || []"
-                      :required="element.required"
-                      :rules="
-                        element.required ? [(v) => !!v || 'This field is required'] : []
-                      "
-                      variant="outlined"
-                      density="comfortable"
-                      clearable
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
                     />
 
-                    <!-- Multi Select -->
-                    <v-select
-                      v-else-if="element.type === 'multiselect'"
+                    <!-- Auto Complete -->
+                    <BaseAutocompleteField
+                      v-else-if="element.type === 'auto_select'"
                       v-model="formData[element.id]"
-                      :label="element.label"
-                      :items="element.options || []"
-                      :required="element.required"
-                      :rules="
-                        element.required ? [(v) => !!v || 'This field is required'] : []
-                      "
-                      variant="outlined"
-                      density="comfortable"
-                      multiple
-                      chips
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
                     />
 
                     <!-- Radio Buttons -->
-                    <div v-else-if="element.type === 'radio'">
-                      <v-label class="mb-2">
-                        {{ element.label }}
-                        <span v-if="element.required" class="text-error">*</span>
-                      </v-label>
-                      <v-radio-group
-                        v-model="formData[element.id]"
-                        :rules="
-                          element.required ? [(v) => !!v || 'This field is required'] : []
-                        "
-                        density="comfortable"
-                      >
-                        <v-radio
-                          v-for="option in element.options || []"
-                          :key="option"
-                          :label="option"
-                          :value="option"
-                        />
-                      </v-radio-group>
-                    </div>
+                    <BaseRadioGroup
+                      v-else-if="element.type === 'radio'"
+                      v-model="formData[element.id]"
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
+                    />
 
                     <!-- Checkboxes -->
-                    <div v-else-if="element.type === 'checkbox'">
-                      <v-label class="mb-2">
-                        {{ element.label }}
-                        <span v-if="element.required" class="text-error">*</span>
-                      </v-label>
-                      <div class="checkbox-group">
-                        <v-checkbox
-                          v-for="option in element.options || []"
-                          :key="option"
-                          v-model="formData[`${element.id}_${option}`]"
-                          :label="option"
-                          :value="true"
-                          density="comfortable"
-                        />
-                      </div>
-                    </div>
+                    <BaseCheckboxGroup
+                      v-else-if="element.type === 'checkbox'"
+                      v-model="formData[element.id]"
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
+                    />
 
                     <!-- Image Upload -->
-                    <div v-else-if="element.type === 'image'">
-                      <v-label class="mb-2">
-                        {{ element.label }}
-                        <span v-if="element.required" class="text-error">*</span>
-                      </v-label>
-                      <v-file-input
-                        v-model="formData[element.id]"
-                        :required="element.required"
-                        :rules="
-                          element.required ? [(v) => !!v || 'This field is required'] : []
-                        "
-                        accept="image/*"
-                        prepend-icon="mdi-image"
-                        variant="outlined"
-                        density="comfortable"
-                        :show-size="1000"
-                      />
-                    </div>
+                    <BaseImageUpload
+                      v-else-if="element.type === 'image'"
+                      v-model="formData[element.id]"
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
+                    />
 
                     <!-- File Upload -->
-                    <div v-else-if="element.type === 'file'">
-                      <v-label class="mb-2">
-                        {{ element.label }}
-                        <span v-if="element.required" class="text-error">*</span>
-                      </v-label>
-                      <v-file-input
-                        v-model="formData[element.id]"
-                        :required="element.required"
-                        :rules="
-                          element.required ? [(v) => !!v || 'This field is required'] : []
-                        "
-                        prepend-icon="mdi-file"
-                        variant="outlined"
-                        density="comfortable"
-                        :show-size="1000"
-                      />
-                    </div>
+                    <BaseFileUpload
+                      v-else-if="element.type === 'file'"
+                      v-model="formData[element.id]"
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
+                    />
                   </div>
                 </div>
               </template>
             </div>
 
-            <v-divider class="my-6" />
+            <v-divider class="my-5" />
 
             <div class="form-actions">
               <v-btn
                 color="primary"
                 size="large"
                 :disabled="!isValid"
+                class="mx-3"
                 @click="submitForm"
                 prepend-icon="mdi-send"
                 :loading="isSubmitting"
@@ -192,7 +130,7 @@
               <v-btn
                 variant="outlined"
                 size="large"
-                class="ml-3"
+                class="mx-3"
                 @click="resetForm"
                 prepend-icon="mdi-refresh"
               >
@@ -219,10 +157,16 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, reactive } from "vue";
-import type { FormConfig, FormElement } from "../types/form";
-import BaseTextField from "./Elements/BaseTextField.vue";
-import BaseTextArea from "./Elements/BaseTextArea.vue";
-import BaseDatePicker from "./Elements/BaseDatePicker.vue";
+import type { FormConfig, FormElement } from "@/types/form";
+import BaseTextField from "@/components/Elements/BaseTextField.vue";
+import BaseTextArea from "@/components/Elements/BaseTextArea.vue";
+import BaseDatePicker from "@/components/Elements/BaseDatePicker.vue";
+import BaseSelectField from "@/components/Elements/BaseSelectField.vue";
+import BaseCheckboxGroup from "@/components/Elements/BaseCheckboxGroup.vue";
+import BaseRadioGroup from "@/components/Elements/BaseRadioGroup.vue";
+import BaseAutocompleteField from "@/components/Elements/BaseAutocompleteField.vue";
+import BaseImageUpload from "@/components/Elements/BaseImageUpload.vue";
+import BaseFileUpload from "@/components/Elements/BaseFileUpload.vue";
 
 interface Props {
   modelValue: boolean;
@@ -381,11 +325,6 @@ watch(dialog, (newValue) => {
 </script>
 
 <style scoped>
-.preview-header {
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 20px;
-}
-
 .form-preview {
   max-width: 600px;
   margin: 0 auto;
@@ -394,13 +333,13 @@ watch(dialog, (newValue) => {
 .form-preview-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .form-preview-row {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 16px;
+  gap: 8px;
   align-items: start;
 }
 
@@ -422,12 +361,6 @@ watch(dialog, (newValue) => {
 
 .form-group.width-two-thirds {
   grid-column: span 8;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 .form-actions {

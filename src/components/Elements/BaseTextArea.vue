@@ -36,7 +36,7 @@ interface ElementProps {
 const props = defineProps<{
   element: ElementProps;
   modelValue?: any;
-  rules?: Array<(v: any) => true | string>;
+  rules?: Array<(v: any) => boolean | string>;
 }>();
 
 const emit = defineEmits<{

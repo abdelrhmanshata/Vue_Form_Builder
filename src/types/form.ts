@@ -30,6 +30,8 @@ export interface FormElement {
   value?: any;
   // Specific properties for different element types
   multiple?: boolean; // For select/multiDropdown
+  inline?: boolean; // For radio/checkbox
+  maxFiles?: number;// For image
   src?: string; // For image
   alt?: string; // For image
   minDate?: string; // For calendar

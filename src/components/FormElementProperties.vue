@@ -73,28 +73,25 @@
               <!-- Multiple Selection for select elements -->
               <v-switch
                 v-if="
-                  element.type === 'select' ||
-                  element.type === 'multiselect' ||
-                  element.type === 'auto_select'
+                  ['select', 'multiselect', 'auto_select'].includes(
+                    element.type
+                  )
                 "
-                :model-value="element.multiple"
+                v-model="element.multiple"
                 label="Multiple Selection"
                 color="primary"
                 density="compact"
-                class="mb-3"
-                @update:model-value="updateProperty('multiple', $event)"
               />
 
               <!-- Multiple Selection for select elements -->
               <v-switch
-                v-if="element.type === 'radio' || element.type === 'checkbox'"
+                v-if="['radio', 'checkbox'].includes(element.type)"
                 :model-value="element.inline"
                 label="Inline Selection"
                 color="primary"
                 density="compact"
-                class="mb-3"
-                @update:model-value="updateProperty('inline', $event)"
               />
+              <!-- @update:model-value="updateProperty('inline', $event)" -->
             </v-expansion-panel-text>
           </v-expansion-panel>
 
@@ -107,25 +104,24 @@
             <v-expansion-panel-text>
               <div class="options-list">
                 <div
-                  v-for="(option, index) in element.options || []"
+                  v-for="(option, index) in localOptions"
                   :key="index"
-                  class="option-item d-flex align-center mb-2"
+                  class="option-item d-flex align-center justify-center"
                 >
                   <v-text-field
-                    :model-value="option"
+                    v-model="localOptions[index]"
                     :label="`Option ${index + 1}`"
                     variant="outlined"
                     density="compact"
-                    class="flex-grow-1 mr-2"
-                    @update:model-value="updateOption(index, $event)"
                   />
+                  <!-- @update:model-value="updateOption(index, $event)" -->
                   <v-btn
                     icon="mdi-delete"
                     size="small"
                     color="error"
                     variant="text"
                     @click="removeOption(index)"
-                    :disabled="element.options && element.options.length <= 1"
+                    :disabled="localOptions.length <= 1"
                   />
                 </div>
               </div>
@@ -134,7 +130,6 @@
                 variant="outlined"
                 size="small"
                 @click="addOption"
-                class="mt-2"
               >
                 Add Option
               </v-btn>
@@ -331,7 +326,9 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'elementId', $event)"
+                    @update:model-value="
+                      updateDependency(index, 'elementId', $event)
+                    "
                     :hint="getElementTypeHint(dependency.elementId)"
                     persistent-hint
                   />
@@ -343,7 +340,9 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'condition', $event)"
+                    @update:model-value="
+                      updateDependency(index, 'condition', $event)
+                    "
                   />
 
                   <v-text-field
@@ -352,7 +351,9 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'value', $event)"
+                    @update:model-value="
+                      updateDependency(index, 'value', $event)
+                    "
                     :hint="getValueHint(dependency.condition)"
                     persistent-hint
                   />
@@ -364,7 +365,9 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'action', $event)"
+                    @update:model-value="
+                      updateDependency(index, 'action', $event)
+                    "
                   />
                 </div>
               </div>
@@ -379,9 +382,16 @@
               >
                 Add Dependency
                 <template v-slot:append>
-                  <v-tooltip v-if="availableDependencies.length === 0" location="top">
+                  <v-tooltip
+                    v-if="availableDependencies.length === 0"
+                    location="top"
+                  >
                     <template v-slot:activator="{ props }">
-                      <v-icon v-bind="props" icon="mdi-information" size="small" />
+                      <v-icon
+                        v-bind="props"
+                        icon="mdi-information"
+                        size="small"
+                      />
                     </template>
                     <span>No other elements available for dependency</span>
                   </v-tooltip>
@@ -429,7 +439,12 @@
 
       <!-- Empty State -->
       <div v-else class="empty-state text-center py-8">
-        <v-icon icon="mdi-cursor-pointer" size="64" color="grey-lighten-2" class="mb-4" />
+        <v-icon
+          icon="mdi-cursor-pointer"
+          size="64"
+          color="grey-lighten-2"
+          class="mb-4"
+        />
         <h3 class="text-h6 mb-2 text-grey-darken-1">No Element Selected</h3>
         <p class="text-body-2 text-grey-darken-1">
           Click on a form element to edit its properties
@@ -518,7 +533,9 @@ const hasPlaceholder = computed(() => {
 
 const hasOptions = computed(() => {
   if (!props.element) return false;
-  return ["select", "multiselect", "radio", "checkbox"].includes(props.element.type);
+  return ["select", "multiselect", "radio", "checkbox"].includes(
+    props.element.type
+  );
 });
 
 const hasValidation = computed(() => {
@@ -573,28 +590,49 @@ const updateValidation = (key: string, value: any) => {
   emit("update-element", props.element.id, { validation });
 };
 
-const updateOption = (index: number, value: string) => {
-  if (!props.element?.options) return;
-  hasChanges.value = true;
-  const newOptions = [...props.element.options];
-  newOptions[index] = value;
-  emit("update-element", props.element.id, { options: newOptions });
-};
+//
+const localOptions = computed<string[]>({
+  get: () => props.element?.options ?? [],
+  set: (newOptions) => {
+    if (!props.element) return;
+    hasChanges.value = true;
+    emit("update-element", props.element.id, { options: newOptions });
+  },
+});
 
 const addOption = () => {
-  if (!props.element) return;
-  hasChanges.value = true;
-  const currentOptions = props.element.options || [];
-  const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
-  emit("update-element", props.element.id, { options: newOptions });
+  localOptions.value = [
+    ...localOptions.value,
+    `Option ${localOptions.value.length + 1}`,
+  ];
 };
 
 const removeOption = (index: number) => {
-  if (!props.element?.options) return;
-  hasChanges.value = true;
-  const newOptions = props.element.options.filter((_, i) => i !== index);
-  emit("update-element", props.element.id, { options: newOptions });
+  localOptions.value = localOptions.value.filter((_, i) => i !== index);
 };
+
+// const updateOption = (index: number, value: string) => {
+//   if (!props.element?.options) return;
+//   hasChanges.value = true;
+//   const newOptions = [...props.element.options];
+//   newOptions[index] = value;
+//   emit("update-element", props.element.id, { options: newOptions });
+// };
+
+// const addOption = () => {
+//   if (!props.element) return;
+//   hasChanges.value = true;
+//   const currentOptions = props.element.options || [];
+//   const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
+//   emit("update-element", props.element.id, { options: newOptions });
+// };
+
+// const removeOption = (index: number) => {
+//   if (!props.element?.options) return;
+//   hasChanges.value = true;
+//   const newOptions = props.element.options.filter((_, i) => i !== index);
+//   emit("update-element", props.element.id, { options: newOptions });
+// };
 
 const addDependency = () => {
   if (!props.element || availableDependencies.value.length === 0) return;
@@ -625,7 +663,9 @@ const updateDependency = (
 const removeDependency = (index: number) => {
   if (!props.element?.dependencies) return;
   hasChanges.value = true;
-  const newDependencies = props.element.dependencies.filter((_, i) => i !== index);
+  const newDependencies = props.element.dependencies.filter(
+    (_, i) => i !== index
+  );
   emit("update-element", props.element.id, { dependencies: newDependencies });
 };
 

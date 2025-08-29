@@ -25,7 +25,7 @@ export interface FormElement {
   width: 'full' | 'two-thirds' | 'half' | 'third' | 'quarter';
   newRow: boolean;
   position: number;
-  options?: string[];
+  options: string[];
   validation: FormValidation;
   dependencies?: FormElementDependency[];
   value?: any;

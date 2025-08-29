@@ -29,7 +29,7 @@
     </div>
 
     <div class="form-element">
-      <!-- {{ element }} -->
+      {{ element }}
 
       <!-- Text Input -->
       <BaseTextField
@@ -37,14 +37,23 @@
         :element="element"
       />
       <!-- Textarea -->
-      <BaseTextArea v-else-if="element.type === 'textarea'" :element="element" />
+      <BaseTextArea
+        v-else-if="element.type === 'textarea'"
+        :element="element"
+      />
 
       <!-- Date Picker -->
-      <BaseDatePicker v-else-if="element.type === 'date_picker'" :element="element" />
+      <BaseDatePicker
+        v-else-if="element.type === 'date_picker'"
+        :element="element"
+      />
 
       <!-- Select -->
       <!-- Multi Select -->
-      <BaseSelectField v-else-if="element.type === 'select'" :element="element" />
+      <BaseSelectField
+        v-else-if="element.type === 'select'"
+        :element="element"
+      />
 
       <!-- Auto Complete -->
       <BaseAutocompleteField
@@ -56,13 +65,22 @@
       <BaseRadioGroup v-else-if="element.type === 'radio'" :element="element" />
 
       <!-- Checkboxes -->
-      <BaseCheckboxGroup v-else-if="element.type === 'checkbox'" :element="element" />
+      <BaseCheckboxGroup
+        v-else-if="element.type === 'checkbox'"
+        :element="element"
+      />
 
       <!-- Image -->
-      <BaseImageUpload v-else-if="element.type === 'upload_image'" :element="element" />
+      <BaseImageUpload
+        v-else-if="element.type === 'upload_image'"
+        :element="element"
+      />
 
       <!-- File Upload -->
-      <BaseFileUpload v-else-if="element.type === 'upload_file'" :element="element" />
+      <BaseFileUpload
+        v-else-if="element.type === 'upload_file'"
+        :element="element"
+      />
 
       <!-- Image -->
       <BaseImageField v-else-if="element.type === 'image'" :element="element" />

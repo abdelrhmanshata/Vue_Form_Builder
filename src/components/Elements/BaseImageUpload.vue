@@ -24,7 +24,7 @@
         <span>
           <span v-if="element.required" class="text-red-500">*</span>
           {{ element.label }}
-          <span v-if="element.maxFiles" class="text-caption text-grey">
+          <span v-if="element.multiple" class="text-caption text-grey">
             (Max {{ element.maxFiles }} files)
           </span>
         </span>

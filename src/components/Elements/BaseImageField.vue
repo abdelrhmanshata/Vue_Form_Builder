@@ -1,12 +1,11 @@
 <template>
-  <div class="d-flex">
+  <div>
     <v-img
+      class="rounded-md elevation-2 border"
       v-if="preview"
       :src="preview"
-      width="300"
-      height="auto"
-      aspect-ratio="1/1"
-      class="rounded-md elevation-2 border"
+      :width="element.w_image"
+      :height="element.h_image"
       cover
       @error="handleError"
     >
@@ -34,6 +33,8 @@ interface ElementProps {
   file?: any;
   url?: string;
   src?: string;
+  w_image?: string;
+  h_image?: string;
 }
 
 const props = defineProps<{
@@ -73,8 +74,13 @@ const handleError = () => {
 watch(
   () => props.element,
   (val) => {
-    generatePreview(val.file);
-    if (val.url) preview.value = val.url;
+    if (val?.file) {
+      generatePreview(val.file);
+    } else if (val?.url) {
+      preview.value = val.url;
+    } else {
+      preview.value = null;
+    }
   },
   { deep: true }
 );

@@ -245,7 +245,7 @@ import type { FormElement, FormElementTemplate } from "../types/form";
 
 const {
   currentForm,
-  currentFormElements,
+  currentFormElements,  
   selectedElement,
   createNewForm,
   updateFormConfig,

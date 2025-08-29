@@ -30,13 +30,15 @@ export interface FormElement {
   dependencies?: FormElementDependency[];
   value?: any;
   // Specific properties for different element types
-  multiple?: boolean; // For select/multiDropdown
-  inline?: boolean; // For radio/checkbox
+  multiple: boolean; // For select/multiDropdown
+  inline: boolean; // For radio/checkbox
   maxFiles?: number;// For image
   file?: any; // For image
   url?: string; // For image
   src?: any; // For image
   alt?: string; // For image
+  w_image: string,
+  h_image: string,
   minDate?: string; // For calendar
   maxDate?: string; // For calendar
 }

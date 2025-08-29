@@ -38,8 +38,8 @@ interface ElementProps {
   type: string;
   label?: string;
   required?: boolean;
-  inline?: boolean;
-  options?: string[];
+  inline: boolean;
+  options: string[];
 }
 
 const props = defineProps<{

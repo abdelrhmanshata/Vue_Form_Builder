@@ -68,30 +68,26 @@
                   density="compact"
                   @update:model-value="updateProperty('required', $event)"
                 />
+                <!-- Multiple Selection for select elements -->
+                <v-switch
+                  v-if="['select', 'auto_select'].includes(element.type)"
+                  v-model="element.multiple"
+                  label="Multiple Selection"
+                  color="primary"
+                  density="compact"
+                  @update:model-value="updateProperty('multiple', $event)"
+                />
+
+                <!-- Inline for select elements -->
+                <v-switch
+                  v-if="['radio', 'checkbox'].includes(element.type)"
+                  v-model="element.inline"
+                  label="Inline Selection"
+                  color="primary"
+                  density="compact"
+                  @update:model-value="updateProperty('inline', $event)"
+                />
               </div>
-
-              <!-- Multiple Selection for select elements -->
-              <v-switch
-                v-if="
-                  ['select', 'multiselect', 'auto_select'].includes(
-                    element.type
-                  )
-                "
-                v-model="element.multiple"
-                label="Multiple Selection"
-                color="primary"
-                density="compact"
-              />
-
-              <!-- Multiple Selection for select elements -->
-              <v-switch
-                v-if="['radio', 'checkbox'].includes(element.type)"
-                :model-value="element.inline"
-                label="Inline Selection"
-                color="primary"
-                density="compact"
-              />
-              <!-- @update:model-value="updateProperty('inline', $event)" -->
             </v-expansion-panel-text>
           </v-expansion-panel>
 
@@ -102,49 +98,143 @@
               Options
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <div class="options-list">
-                <div
+              <div>
+                <v-row
                   v-for="(option, index) in localOptions"
                   :key="index"
-                  class="option-item d-flex align-center justify-center"
+                  class="option-item align-center rounded-lg my-1 px-1"
                 >
-                  <v-text-field
-                    v-model="localOptions[index]"
-                    :label="`Option ${index + 1}`"
-                    variant="outlined"
-                    density="compact"
-                  />
-                  <!-- @update:model-value="updateOption(index, $event)" -->
-                  <v-btn
-                    icon="mdi-delete"
-                    size="small"
-                    color="error"
-                    variant="text"
-                    @click="removeOption(index)"
-                    :disabled="localOptions.length <= 1"
-                  />
-                </div>
+                  <v-col cols="11" class="pa-0">
+                    <v-text-field
+                      v-model="localOptions[index]"
+                      :label="`Option ${index + 1}`"
+                      variant="outlined"
+                      density="compact"
+                      hide-details
+                    />
+                  </v-col>
+
+                  <v-col cols="1" class="d-flex">
+                    <v-btn
+                      icon
+                      size="small"
+                      color="error"
+                      variant="text"
+                      @click="removeOption(index)"
+                      :disabled="localOptions.length <= 1"
+                    >
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
+                <v-btn
+                  prepend-icon="mdi-plus"
+                  variant="tonal"
+                  size="small"
+                  class="mt-2"
+                  color="primary"
+                  @click="addOption"
+                >
+                  Add Option
+                </v-btn>
               </div>
-              <v-btn
-                prepend-icon="mdi-plus"
-                variant="outlined"
-                size="small"
-                @click="addOption"
-              >
-                Add Option
-              </v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
 
           <!-- Type-Image Properties -->
-          <v-expansion-panel value="typeImage" v-if="hasTypeImage">
+          <v-expansion-panel value="typeImage" v-if="hasTypeSpecific">
             <v-expansion-panel-title>
-              <v-icon icon="mdi-image" class="mr-2" />
-              Image Properties
+              <v-icon :icon="typeSpecific.icon" class="mr-2" />
+              {{ typeSpecific.title }}
             </v-expansion-panel-title>
             <v-expansion-panel-text>
+              <!-- Upload Image Properties -->
+              <div v-if="element.type === 'upload_image'">
+                <!-- Multiple Selection for select elements -->
+                <v-switch
+                  v-model="element.multiple"
+                  label="Upload Multiple Image"
+                  color="primary"
+                  density="compact"
+                  @update:model-value="updateProperty('multiple', $event)"
+                />
+                <v-text-field
+                  v-if="element.multiple"
+                  v-model.number="element.maxFiles"
+                  label="Maximum Images"
+                  type="number"
+                  min="2"
+                  max="10"
+                  color="primary"
+                  icon-color="primary"
+                  variant="outlined"
+                  density="compact"
+                  clearable
+                  @update:model-value="updateProperty('maxFiles', $event)"
+                />
+              </div>
+
+              <div v-if="element.type === 'upload_file'">
+                <!-- Multiple Selection for select elements -->
+                <v-switch
+                  v-model="element.multiple"
+                  label="Upload Multiple Files"
+                  color="primary"
+                  density="compact"
+                  @update:model-value="updateProperty('multiple', $event)"
+                />
+                <v-text-field
+                  v-if="element.multiple"
+                  v-model.number="element.maxFiles"
+                  label="Maximum Files"
+                  type="number"
+                  min="2"
+                  max="10"
+                  color="primary"
+                  icon-color="primary"
+                  variant="outlined"
+                  density="compact"
+                  clearable
+                  @update:model-value="updateProperty('maxFiles', $event)"
+                />
+              </div>
+
               <!-- Image Properties -->
               <div v-if="element.type === 'image'">
+                <div class="d-flex">
+                  <v-checkbox label="Width" v-model="checkWImage" />
+                  <v-slider
+                    :disabled="!checkWImage"
+                    v-model="element.w_image"
+                    prepend-icon="mdi-minus"
+                    append-icon="mdi-plus"
+                    color="primary"
+                    max="1000"
+                    min="100"
+                    step="10"
+                    thumb-label="always"
+                    @update:model-value="updateProperty('w_image', $event)"
+                  />
+                </div>
+
+                <div class="d-flex">
+                  <v-checkbox label="Height" v-model="checkHImage" />
+                  <v-slider
+                    :disabled="!checkHImage"
+                    v-model="element.h_image"
+                    prepend-icon="mdi-minus"
+                    append-icon="mdi-plus"
+                    color="primary"
+                    max="1000"
+                    min="100"
+                    step="10"
+                    thumb-label="always"
+                    @update:model-value="updateProperty('h_image', $event)"
+                  />
+                </div>
+
+                <!--  -->
                 <v-file-input
                   v-model="element.file"
                   label="Image"
@@ -175,12 +265,15 @@
                 />
 
                 <v-text-field
-                  :model-value="element.alt"
+                  v-model="element.alt"
                   label="Alt Text"
-                  variant="outlined"
-                  density="compact"
-                  @update:model-value="updateProperty('alt', $event)"
                   placeholder="Description of the image"
+                  prepend-inner-icon="mdi-text-recognition"
+                  color="primary"
+                  icon-color="primary"
+                  density="compact"
+                  variant="outlined"
+                  clearable
                 />
               </div>
             </v-expansion-panel-text>
@@ -326,9 +419,7 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="
-                      updateDependency(index, 'elementId', $event)
-                    "
+                    @update:model-value="updateDependency(index, 'elementId', $event)"
                     :hint="getElementTypeHint(dependency.elementId)"
                     persistent-hint
                   />
@@ -340,9 +431,7 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="
-                      updateDependency(index, 'condition', $event)
-                    "
+                    @update:model-value="updateDependency(index, 'condition', $event)"
                   />
 
                   <v-text-field
@@ -351,9 +440,7 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="
-                      updateDependency(index, 'value', $event)
-                    "
+                    @update:model-value="updateDependency(index, 'value', $event)"
                     :hint="getValueHint(dependency.condition)"
                     persistent-hint
                   />
@@ -365,9 +452,7 @@
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="
-                      updateDependency(index, 'action', $event)
-                    "
+                    @update:model-value="updateDependency(index, 'action', $event)"
                   />
                 </div>
               </div>
@@ -382,16 +467,9 @@
               >
                 Add Dependency
                 <template v-slot:append>
-                  <v-tooltip
-                    v-if="availableDependencies.length === 0"
-                    location="top"
-                  >
+                  <v-tooltip v-if="availableDependencies.length === 0" location="top">
                     <template v-slot:activator="{ props }">
-                      <v-icon
-                        v-bind="props"
-                        icon="mdi-information"
-                        size="small"
-                      />
+                      <v-icon v-bind="props" icon="mdi-information" size="small" />
                     </template>
                     <span>No other elements available for dependency</span>
                   </v-tooltip>
@@ -439,12 +517,7 @@
 
       <!-- Empty State -->
       <div v-else class="empty-state text-center py-8">
-        <v-icon
-          icon="mdi-cursor-pointer"
-          size="64"
-          color="grey-lighten-2"
-          class="mb-4"
-        />
+        <v-icon icon="mdi-cursor-pointer" size="64" color="grey-lighten-2" class="mb-4" />
         <h3 class="text-h6 mb-2 text-grey-darken-1">No Element Selected</h3>
         <p class="text-body-2 text-grey-darken-1">
           Click on a form element to edit its properties
@@ -476,14 +549,9 @@ const emit = defineEmits<{
 const expandedPanels = ref(["basic"]);
 const hasChanges = ref(false);
 
-// Reset changes flag when element changes
-watch(
-  () => props.element,
-  () => {
-    hasChanges.value = false;
-    expandedPanels.value = ["basic"];
-  }
-);
+const localOptions = ref<string[]>([...(props.element?.options ?? [])]);
+const checkWImage = ref(false);
+const checkHImage = ref(false);
 
 const elementTypeLabel = computed(() => {
   if (!props.element) return "";
@@ -493,7 +561,6 @@ const elementTypeLabel = computed(() => {
     textarea: "Text Area",
     date: "Date Picker",
     select: "Select Dropdown",
-    multiselect: "Multi Select",
     radio: "Radio Buttons",
     checkbox: "Checkboxes",
     image: "Image Upload",
@@ -533,9 +600,7 @@ const hasPlaceholder = computed(() => {
 
 const hasOptions = computed(() => {
   if (!props.element) return false;
-  return ["select", "multiselect", "radio", "checkbox"].includes(
-    props.element.type
-  );
+  return ["select", "auto_select", "radio", "checkbox"].includes(props.element.type);
 });
 
 const hasValidation = computed(() => {
@@ -545,21 +610,24 @@ const hasValidation = computed(() => {
   );
 });
 
-const hasTypeImage = computed(() => {
+const hasTypeSpecific = computed(() => {
   if (!props.element) return false;
-  return ["image"].includes(props.element.type);
+  return ["image", "upload_image", "upload_file"].includes(props.element.type);
 });
 
-const typeSpecificIcon = computed(() => {
-  if (!props.element) return "mdi-cog";
-  return "mdi-image";
-  // return props.element.type === "image" ? "mdi-image" : "mdi-calendar";
-});
+const typeSpecific = computed(() => {
+  if (!props.element) return { title: "Properties", icon: "mdi-cog" };
 
-const typeSpecificTitle = computed(() => {
-  if (!props.element) return "";
-  return "Image Properties";
-  // return  props.element.type === "image" ? "Image Properties" : "Date Range";
+  switch (props.element.type) {
+    case "image":
+      return { title: "Image Properties", icon: "mdi-image" };
+    case "upload_image":
+      return { title: "Upload Image Properties", icon: "mdi-image-plus" };
+    case "upload_file":
+      return { title: "Upload File Properties", icon: "mdi-file-upload" };
+    default:
+      return { title: "Properties", icon: "mdi-cog" };
+  }
 });
 
 const availableDependencies = computed(() => {
@@ -591,49 +659,17 @@ const updateValidation = (key: string, value: any) => {
 };
 
 //
-const localOptions = computed<string[]>({
-  get: () => props.element?.options ?? [],
-  set: (newOptions) => {
-    if (!props.element) return;
-    hasChanges.value = true;
-    emit("update-element", props.element.id, { options: newOptions });
-  },
-});
 
 const addOption = () => {
-  localOptions.value = [
-    ...localOptions.value,
-    `Option ${localOptions.value.length + 1}`,
-  ];
+  localOptions.value.push(`Option ${localOptions.value.length + 1}`);
 };
 
 const removeOption = (index: number) => {
-  localOptions.value = localOptions.value.filter((_, i) => i !== index);
+  if (localOptions.value.length > 1) {
+    localOptions.value.splice(index, 1);
+  }
 };
-
-// const updateOption = (index: number, value: string) => {
-//   if (!props.element?.options) return;
-//   hasChanges.value = true;
-//   const newOptions = [...props.element.options];
-//   newOptions[index] = value;
-//   emit("update-element", props.element.id, { options: newOptions });
-// };
-
-// const addOption = () => {
-//   if (!props.element) return;
-//   hasChanges.value = true;
-//   const currentOptions = props.element.options || [];
-//   const newOptions = [...currentOptions, `Option ${currentOptions.length + 1}`];
-//   emit("update-element", props.element.id, { options: newOptions });
-// };
-
-// const removeOption = (index: number) => {
-//   if (!props.element?.options) return;
-//   hasChanges.value = true;
-//   const newOptions = props.element.options.filter((_, i) => i !== index);
-//   emit("update-element", props.element.id, { options: newOptions });
-// };
-
+//
 const addDependency = () => {
   if (!props.element || availableDependencies.value.length === 0) return;
   hasChanges.value = true;
@@ -663,9 +699,7 @@ const updateDependency = (
 const removeDependency = (index: number) => {
   if (!props.element?.dependencies) return;
   hasChanges.value = true;
-  const newDependencies = props.element.dependencies.filter(
-    (_, i) => i !== index
-  );
+  const newDependencies = props.element.dependencies.filter((_, i) => i !== index);
   emit("update-element", props.element.id, { dependencies: newDependencies });
 };
 
@@ -684,6 +718,51 @@ const getValueHint = (condition: string) => {
   };
   return hints[condition] || "Enter comparison value";
 };
+
+// watches
+
+//
+watch(
+  () => props.element?.options,
+  (newVal) => {
+    if (newVal) localOptions.value = [...newVal];
+  },
+  { deep: true }
+);
+
+watch(checkWImage, (newVal) => {
+  if (!props.element) return;
+  emit("update-element", props.element.id, {
+    w_image: newVal ? props.element?.w_image : "auto",
+  });
+});
+
+watch(checkHImage, (newVal) => {
+  if (!props.element) return;
+  emit("update-element", props.element.id, {
+    h_image: newVal ? props.element?.h_image : "auto",
+  });
+});
+
+// Emit Options
+watch(
+  localOptions,
+  (newVal) => {
+    if (props.element) {
+      emit("update-element", props.element.id, { options: [...newVal] });
+    }
+  },
+  { deep: true }
+);
+
+// Reset changes flag when element changes
+watch(
+  () => props.element,
+  () => {
+    hasChanges.value = false;
+    expandedPanels.value = ["basic"];
+  }
+);
 </script>
 
 <style scoped>
@@ -719,13 +798,16 @@ const getValueHint = (condition: string) => {
 
 .option-item {
   transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
 }
 
 .option-item:hover {
-  background-color: #f5f5f5;
-  border-radius: 4px;
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+  transform: scale(1.01);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
-
 .quick-actions {
   border-top: 1px solid #e0e0e0;
   padding-top: 16px;

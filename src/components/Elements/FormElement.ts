@@ -14,6 +14,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -27,6 +28,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -40,6 +42,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -53,6 +56,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
     // Date Inputs
@@ -66,6 +70,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -79,6 +84,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
     // Select Inputs
@@ -94,6 +100,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             options: ["Option 1", "Option 2", "Option 3"],
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -108,6 +115,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             options: ["Option 1", "Option 2", "Option 3"],
             validation: {},
+            dependencies: []
         },
     },
     //   
@@ -123,6 +131,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             options: ["Option 1", "Option 2", "Option 3"],
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -137,6 +146,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             options: ["Option 1", "Option 2"],
             validation: {},
+            dependencies: []
         },
     },
     // Media
@@ -152,6 +162,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             maxFiles: 2, // Maximum 2 images,
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -166,6 +177,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             newRow: false,
             maxFiles: 3, // Maximum 3 files,
             validation: {},
+            dependencies: []
         },
     },
     {
@@ -182,6 +194,7 @@ export const formElementTemplates: FormElementTemplate[] = [
             width: "full",
             newRow: false,
             validation: {},
+            dependencies: []
         },
     },
 ];

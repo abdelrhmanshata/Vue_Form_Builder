@@ -17,7 +17,6 @@
 
       <v-spacer />
 
-      <!-- إضافة عناصر التحكم في التاريخ هنا -->
       <HistoryControls
         v-if="currentForm"
         :can-undo="canUndo"
@@ -110,17 +109,6 @@
             >
               Create Your First Form
             </v-btn>
-
-            <!-- <div class="features-grid">
-              <v-row>
-                <v-col cols="6" v-for="feature in features" :key="feature.title">
-                  <div class="feature-item text-center">
-                    <v-icon :icon="feature.icon" size="32" color="primary" class="mb-2" />
-                    <div class="text-caption font-weight-medium">{{ feature.title }}</div>
-                  </div>
-                </v-col>
-              </v-row>
-            </div> -->
           </v-col>
         </v-row>
 
@@ -235,17 +223,17 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
-import { useFormBuilder } from "../composables/useFormBuilder";
-import FormElementPalette from "../components/FormElementPalette.vue";
-import FormCanvas from "../components/FormCanvas.vue";
-import FormElementProperties from "../components/FormElementProperties.vue";
-import FormPreviewDialog from "../components/FormPreviewDialog.vue";
-import HistoryControls from "../components/HistoryControls.vue"; // تأكد من استيراد المكون
-import type { FormElement, FormElementTemplate } from "../types/form";
+import { useFormBuilder } from "@/composables/useFormBuilder";
+import FormElementPalette from "@/components/FormElementPalette.vue";
+import FormCanvas from "@/components/FormCanvas.vue";
+import FormElementProperties from "@/components/FormElementProperties.vue";
+import FormPreviewDialog from "@/components/FormPreviewDialog.vue";
+import HistoryControls from "@/components/HistoryControls.vue";
+import type { FormElement, FormElementTemplate } from "@/types/form";
 
 const {
   currentForm,
-  currentFormElements,  
+  currentFormElements,
   selectedElement,
   createNewForm,
   updateFormConfig,
@@ -274,15 +262,6 @@ const snackbar = reactive({
   color: "success",
   icon: "mdi-check",
 });
-
-const features = [
-  { icon: "mdi-drag", title: "Drag & Drop" },
-  { icon: "mdi-responsive", title: "Responsive" },
-  { icon: "mdi-preview", title: "Live Preview" },
-  { icon: "mdi-export", title: "Export" },
-  { icon: "mdi-validation", title: "Validation" },
-  { icon: "mdi-link", title: "Dependencies" },
-];
 
 const exportType = computed(() => {
   return exportTab.value === "html" ? "HTML" : "JSON";

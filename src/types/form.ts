@@ -27,7 +27,7 @@ export interface FormElement {
   position: number;
   options: string[];
   validation: FormValidation;
-  dependencies?: FormElementDependency[];
+  dependencies: FormElementDependency[];
   value?: any;
   // Specific properties for different element types
   multiple: boolean; // For select/multiDropdown

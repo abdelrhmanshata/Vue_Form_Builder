@@ -381,21 +381,18 @@
               <v-icon icon="mdi-link" class="mr-2" />
               Dependencies
               <v-chip
-                v-if="element.dependencies?.length"
+                v-if="localDependencies?.length"
                 size="x-small"
                 color="primary"
                 class="ml-2"
               >
-                {{ element.dependencies.length }}
+                {{ localDependencies.length }}
               </v-chip>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
-              <div
-                v-if="element.dependencies && element.dependencies.length > 0"
-                class="dependencies-list"
-              >
+              <div v-if="localDependencies?.length" class="dependencies-list">
                 <div
-                  v-for="(dependency, index) in element.dependencies"
+                  v-for="(dependency, index) in localDependencies"
                   :key="index"
                   class="dependency-item mb-4 pa-3 rounded border"
                 >
@@ -412,62 +409,67 @@
                     />
                   </div>
 
+                  <!-- :model-value="dependency.elementId" -->
                   <v-select
-                    :model-value="dependency.elementId"
+                    v-model="localDependencies[index].elementId"
                     :items="availableDependencies"
                     label="Depends On"
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'elementId', $event)"
                     :hint="getElementTypeHint(dependency.elementId)"
                     persistent-hint
                   />
+                  <!-- @update:model-value="updateDependency(index, 'elementId', $event)" -->
 
+                  <!-- :model-value="dependency.condition" -->
                   <v-select
-                    :model-value="dependency.condition"
+                    v-model="localDependencies[index].condition"
                     :items="conditionOptions"
                     label="Condition"
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'condition', $event)"
                   />
+                  <!-- @update:model-value="updateDependency(index, 'condition', $event)" -->
 
+                  <!-- :model-value="dependency.value" -->
                   <v-text-field
-                    :model-value="dependency.value"
+                    v-model="localDependencies[index].value"
                     label="Value"
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'value', $event)"
                     :hint="getValueHint(dependency.condition)"
                     persistent-hint
                   />
+                  <!-- @update:model-value="updateDependency(index, 'value', $event)" -->
 
+                  <!-- :model-value="dependency.action" -->
                   <v-select
-                    :model-value="dependency.action"
+                    v-model="localDependencies[index].action"
                     :items="actionOptions"
                     label="Action"
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                    @update:model-value="updateDependency(index, 'action', $event)"
                   />
+                  <!-- @update:model-value="updateDependency(index, 'action', $event)" -->
                 </div>
               </div>
 
+              <!-- Add Dependency -->
               <v-btn
                 prepend-icon="mdi-plus"
                 variant="outlined"
                 size="small"
                 @click="addDependency"
-                :disabled="availableDependencies.length === 0"
+                :disabled="!availableDependencies.length"
                 class="mt-2"
               >
                 Add Dependency
                 <template v-slot:append>
-                  <v-tooltip v-if="availableDependencies.length === 0" location="top">
+                  <v-tooltip v-if="!availableDependencies.length" location="top">
                     <template v-slot:activator="{ props }">
                       <v-icon v-bind="props" icon="mdi-information" size="small" />
                     </template>
@@ -477,7 +479,7 @@
               </v-btn>
 
               <div
-                v-if="availableDependencies.length === 0"
+                v-if="!availableDependencies.length"
                 class="text-caption text-grey mt-2"
               >
                 Add more elements to create dependencies.
@@ -577,22 +579,6 @@ const widthOptions = [
   { title: "Quarter Width (25%)", value: "quarter" },
 ];
 
-const conditionOptions = [
-  { title: "Equals", value: "equals" },
-  { title: "Not Equals", value: "notEquals" },
-  { title: "Contains", value: "contains" },
-  { title: "Greater Than", value: "greaterThan" },
-  { title: "Less Than", value: "lessThan" },
-];
-
-const actionOptions = [
-  { title: "Show Element", value: "show" },
-  { title: "Hide Element", value: "hide" },
-  { title: "Enable Element", value: "enable" },
-  { title: "Disable Element", value: "disable" },
-  { title: "Update Options", value: "updateOptions" },
-];
-
 const hasPlaceholder = computed(() => {
   if (!props.element) return false;
   return ["text", "email", "number", "textarea"].includes(props.element.type);
@@ -630,15 +616,6 @@ const typeSpecific = computed(() => {
   }
 });
 
-const availableDependencies = computed(() => {
-  return props.availableElements
-    .filter((el) => el.id !== props.element?.id)
-    .map((el) => ({
-      title: `${el.label} (${el.type})`,
-      value: el.id,
-    }));
-});
-
 const updateProperty = (key: keyof FormElement, value: any) => {
   if (!props.element) return;
   hasChanges.value = true;
@@ -670,18 +647,47 @@ const removeOption = (index: number) => {
   }
 };
 //
+const conditionOptions = [
+  { title: "Equals", value: "equals" },
+  { title: "Not Equals", value: "notEquals" },
+  { title: "Contains", value: "contains" },
+  { title: "Greater Than", value: "greaterThan" },
+  { title: "Less Than", value: "lessThan" },
+] as const;
+
+const actionOptions = [
+  { title: "Show Element", value: "show" },
+  { title: "Hide Element", value: "hide" },
+  { title: "Enable Element", value: "enable" },
+  { title: "Disable Element", value: "disable" },
+  { title: "Update Options", value: "updateOptions" },
+] as const;
+//
+const availableDependencies = computed(() =>
+  props.availableElements
+    .filter((el) => el.id !== props.element?.id)
+    .map((el) => ({
+      title: `${el.label} (${el.type})`,
+      value: el.id,
+    }))
+);
+
+const localDependencies = ref<FormElementDependency[]>([
+  ...(props.element?.dependencies ?? []),
+]);
+
 const addDependency = () => {
-  if (!props.element || availableDependencies.value.length === 0) return;
-  hasChanges.value = true;
+  if (!props.element || !availableDependencies.value.length) return;
   const newDependency: FormElementDependency = {
-    elementId: availableDependencies.value[0]?.value || "",
+    elementId: availableDependencies.value[0].value,
     condition: "equals",
     value: "",
     action: "show",
   };
-  const currentDependencies = props.element.dependencies || [];
-  const newDependencies = [...currentDependencies, newDependency];
-  emit("update-element", props.element.id, { dependencies: newDependencies });
+  localDependencies.value.push(newDependency);
+  // emit("update-element", props.element.id, {
+  //   dependencies: [...(props.element.dependencies || []), newDependency],
+  // });
 };
 
 const updateDependency = (
@@ -690,42 +696,47 @@ const updateDependency = (
   value: any
 ) => {
   if (!props.element?.dependencies) return;
+
   hasChanges.value = true;
-  const newDependencies = [...props.element.dependencies];
-  newDependencies[index] = { ...newDependencies[index], [key]: value };
-  emit("update-element", props.element.id, { dependencies: newDependencies });
+  const updated = props.element.dependencies.map((dep, i) =>
+    i === index ? { ...dep, [key]: value } : dep
+  );
+
+  emit("update-element", props.element.id, { dependencies: updated });
 };
 
 const removeDependency = (index: number) => {
   if (!props.element?.dependencies) return;
+
   hasChanges.value = true;
-  const newDependencies = props.element.dependencies.filter((_, i) => i !== index);
-  emit("update-element", props.element.id, { dependencies: newDependencies });
+  localDependencies.value.splice(index, 1);
+  // const updated = props.element.dependencies.filter((_, i) => i !== index);
+  // emit("update-element", props.element.id, { dependencies: updated });
 };
 
-const getElementTypeHint = (elementId: string) => {
-  const element = props.availableElements.find((el) => el.id === elementId);
-  return element ? `Type: ${element.type}` : "";
-};
+const getElementTypeHint = (elementId: string) =>
+  props.availableElements.find((el) => el.id === elementId)?.type
+    ? `Type: ${props.availableElements.find((el) => el.id === elementId)!.type}`
+    : "";
 
-const getValueHint = (condition: string) => {
-  const hints: Record<string, string> = {
+const getValueHint = (condition: string) =>
+  ({
     equals: "Value must exactly match",
     notEquals: "Value must not match",
     contains: "Value must contain this text",
     greaterThan: "Value must be greater than this number",
     lessThan: "Value must be less than this number",
-  };
-  return hints[condition] || "Enter comparison value";
-};
+  }[condition] || "Enter comparison value");
 
 // watches
 
 //
 watch(
-  () => props.element?.options,
-  (newVal) => {
-    if (newVal) localOptions.value = [...newVal];
+  () => props.element,
+  (newElementVal) => {
+    if (newElementVal?.options) localOptions.value = [...newElementVal?.options];
+    if (newElementVal?.dependencies)
+      localDependencies.value = [...newElementVal?.dependencies];
   },
   { deep: true }
 );
@@ -750,6 +761,16 @@ watch(
   (newVal) => {
     if (props.element) {
       emit("update-element", props.element.id, { options: [...newVal] });
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  localDependencies,
+  (newVal) => {
+    if (props.element) {
+      emit("update-element", props.element.id, { dependencies: [...newVal] });
     }
   },
   { deep: true }

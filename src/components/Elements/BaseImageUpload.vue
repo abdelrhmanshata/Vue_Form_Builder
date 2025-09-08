@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="show">
     <v-file-input
       v-model="internalValue"
       :placeholder="element.placeholder"
@@ -13,6 +13,7 @@
       icon-color="primary"
       variant="outlined"
       density="comfortable"
+      hide-details="auto"
       show-size
       clearable
       counter
@@ -76,11 +77,18 @@ interface ElementProps {
   maxFiles?: number;
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: File | File[] | null;
-  rules?: Array<(v: any) => boolean | string>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: File | File[] | null): void;
@@ -160,7 +168,9 @@ const generatePreviews = (files: File | File[] | null | undefined) => {
 
     // If we had to limit files, update the internal value
     if (limitedFiles.length !== fileArray.length) {
-      internalValue.value = props.element.multiple ? limitedFiles : limitedFiles[0];
+      internalValue.value = props.element.multiple
+        ? limitedFiles
+        : limitedFiles[0];
       return; // Exit early as the watch will trigger again
     }
   }

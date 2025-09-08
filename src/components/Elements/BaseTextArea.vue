@@ -1,5 +1,6 @@
 <template>
   <v-textarea
+    v-if="show"
     v-model="internalValue"
     :type="element.type"
     :placeholder="element.placeholder"
@@ -11,6 +12,7 @@
     variant="outlined"
     density="comfortable"
     rows="4"
+    hide-details="auto"
     clearable
   >
     <template #label>
@@ -33,11 +35,18 @@ interface ElementProps {
   required?: boolean;
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: any;
-  rules?: Array<(v: any) => boolean | string>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: any): void;

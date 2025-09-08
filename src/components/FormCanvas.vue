@@ -4,7 +4,12 @@
       <div class="d-flex align-center">
         <v-icon icon="mdi-form-select" class="mr-2" />
         <p class="text-wrap">Form Canvas</p>
-        <v-chip v-if="elements.length > 0" size="small" color="primary" class="mx-2">
+        <v-chip
+          v-if="elements.length > 0"
+          size="small"
+          color="primary"
+          class="mx-2"
+        >
           {{ elements.length }} elements
         </v-chip>
       </div>
@@ -77,16 +82,24 @@
         @drop="onDrop"
       >
         <div v-if="elements.length === 0" class="empty-state">
-          <v-icon icon="mdi-drag" size="48" color="grey-lighten-2" class="mb-3" />
+          <v-icon
+            icon="mdi-drag"
+            size="48"
+            color="grey-lighten-2"
+            class="mb-3"
+          />
           <h3 class="text-h6 mb-2 text-grey-darken-1">Drag elements here</h3>
           <p class="text-body-2 text-grey-lighten-1 text-center">
-            Start building your form by dragging elements<br />from the palette on the
-            left
+            Start building your form by dragging elements<br />from the palette
+            on the left
           </p>
         </div>
-
         <div v-else class="form-grid">
-          <template v-for="(row, rowIndex) in elementRows" :key="`row-${rowIndex}`">
+          <!-- {{ elementRows }} -->
+          <template
+            v-for="(row, rowIndex) in elementRows"
+            :key="`row-${rowIndex}`"
+          >
             <div class="form-row" :class="`row-${rowIndex}`">
               <FormElementRenderer
                 v-for="element in row"
@@ -110,7 +123,11 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import FormElementRenderer from "@/components/FormElementRenderer.vue";
-import type { FormElement, FormConfig, FormElementTemplate } from "@/types/form";
+import type {
+  FormElement,
+  FormConfig,
+  FormElementTemplate,
+} from "@/types/form";
 
 interface Props {
   form: FormConfig | null;
@@ -211,15 +228,23 @@ const onDrop = (event: DragEvent) => {
 
       if (data.type === "form-element" && data.template) {
         // Calculate drop position based on mouse position
-        const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+        const rect = (
+          event.currentTarget as HTMLElement
+        ).getBoundingClientRect();
         const y = event.clientY - rect.top;
         const elementHeight = 80; // Approximate height of form elements
         const position = Math.floor(y / elementHeight);
 
-        emit("add-element", data.template, Math.min(position, props.elements.length));
+        emit(
+          "add-element",
+          data.template,
+          Math.min(position, props.elements.length)
+        );
       } else if (data.type === "form-element-move" && data.elementId) {
         // Handle moving existing elements
-        const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+        const rect = (
+          event.currentTarget as HTMLElement
+        ).getBoundingClientRect();
         const y = event.clientY - rect.top;
         const elementHeight = 80;
         const newPosition = Math.floor(y / elementHeight);

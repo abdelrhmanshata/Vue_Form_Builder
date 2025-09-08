@@ -1,5 +1,6 @@
 <template>
   <v-select
+    v-if="show"
     v-model="internalValue"
     :items="element.options || []"
     :required="element.required"
@@ -10,6 +11,7 @@
     icon-color="primary"
     variant="outlined"
     density="comfortable"
+    hide-details="auto"
     clearable
     chips
   >
@@ -35,12 +37,18 @@ interface ElementProps {
   multiple?: boolean;
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: any;
-  rules?: Array<(v: any) => boolean | string>;
-}>();
-
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 const emit = defineEmits<{
   (e: "update:modelValue", value: any): void;
 }>();

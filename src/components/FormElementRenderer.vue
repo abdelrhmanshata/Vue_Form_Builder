@@ -29,11 +29,14 @@
     </div>
 
     <div class="form-element">
-      {{ element }}
+      <!-- {{ element }} -->
+
+      <!-- Text Label -->
+      <BaseLabelField v-if="element.type === 'label'" :element="element" />
 
       <!-- Text Input -->
       <BaseTextField
-        v-if="['text', 'email', 'number', 'date'].includes(element.type)"
+        v-else-if="['text', 'email', 'number', 'date'].includes(element.type)"
         :element="element"
       />
       <!-- Textarea -->
@@ -101,6 +104,7 @@ import BaseAutocompleteField from "@/components/Elements/BaseAutocompleteField.v
 import BaseImageUpload from "@/components/Elements/BaseImageUpload.vue";
 import BaseFileUpload from "@/components/Elements/BaseFileUpload.vue";
 import BaseImageField from "@/components/Elements/BaseImageField.vue";
+import BaseLabelField from "./Elements/BaseLabelField.vue";
 //
 
 interface Props {

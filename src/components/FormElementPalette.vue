@@ -115,6 +115,7 @@ const toggleCategory = (category: string) => {
 
 const getCategory = (type: string) => {
   const map: Record<string, string> = {
+    label: "Input Fields",
     text: "Input Fields",
     email: "Input Fields",
     password: "Input Fields",

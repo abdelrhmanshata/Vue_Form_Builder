@@ -1,5 +1,5 @@
 <template>
-  <div class="checkbox-group">
+  <div v-if="show" class="checkbox-group">
     <!-- Label -->
     <label class="field-label">
       <span v-if="element.required" class="text-red-500">*</span>
@@ -35,10 +35,18 @@ interface ElementProps {
   options?: string[];
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: Record<string, boolean>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: Record<string, boolean>): void;

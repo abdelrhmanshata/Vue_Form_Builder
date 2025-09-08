@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="show">
     <v-file-input
       v-model="internalValue"
       :required="element.required"
@@ -14,6 +14,7 @@
       :counter-value="counterValue"
       @update:modelValue="handleFileChange"
       @click:clear="clearAllFiles"
+      hide-details="auto"
       show-size
       clearable
       counter
@@ -41,7 +42,11 @@
       density="compact"
       class="mt-2 bg-grey-lighten-5 rounded-lg"
     >
-      <v-list-item v-for="(file, index) in allFiles" :key="'file-' + index" class="mb-1">
+      <v-list-item
+        v-for="(file, index) in allFiles"
+        :key="'file-' + index"
+        class="mb-1"
+      >
         <template #prepend>
           <v-icon :color="getFileIcon(file).color" size="small">
             {{ getFileIcon(file).icon }}
@@ -92,24 +97,35 @@ interface ElementProps {
   accept?: string;
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: File | File[] | null;
-  rules?: Array<(v: any) => boolean | string>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: File | File[] | null): void;
 }>();
 
 // Internal state
-const internalValue = ref<File[] | File | null | undefined>(props.modelValue ?? null);
+const internalValue = ref<File[] | File | null | undefined>(
+  props.modelValue ?? null
+);
 const allFiles = ref<File[]>([]);
 
 // Computed properties
 const selectedFiles = computed(() => {
   if (!internalValue.value) return [];
-  return Array.isArray(internalValue.value) ? internalValue.value : [internalValue.value];
+  return Array.isArray(internalValue.value)
+    ? internalValue.value
+    : [internalValue.value];
 });
 
 // Counter value for file input
@@ -124,7 +140,8 @@ const getFileIcon = (file: File): { icon: string; color: string } => {
 
   if (type.startsWith("image/")) return { icon: "mdi-image", color: "blue" };
 
-  if (type.startsWith("video/")) return { icon: "mdi-video", color: "deep-purple" };
+  if (type.startsWith("video/"))
+    return { icon: "mdi-video", color: "deep-purple" };
 
   if (type.startsWith("audio/")) return { icon: "mdi-music", color: "pink" };
 
@@ -142,7 +159,8 @@ const getFileIcon = (file: File): { icon: string; color: string } => {
   if (type.includes("zip") || type.includes("compressed"))
     return { icon: "mdi-folder-zip", color: "brown" };
 
-  if (type.includes("text")) return { icon: "mdi-file-document", color: "grey" };
+  if (type.includes("text"))
+    return { icon: "mdi-file-document", color: "grey" };
 
   return { icon: "mdi-file", color: "grey-darken-1" };
 };
@@ -155,7 +173,11 @@ const getFileType = (file: File): string => {
     return `${extension} File`;
   }
 
-  return type.split("/")[1]?.toUpperCase() || type.split("/")[0]?.toUpperCase() || "File";
+  return (
+    type.split("/")[1]?.toUpperCase() ||
+    type.split("/")[0]?.toUpperCase() ||
+    "File"
+  );
 };
 
 // Format file size for display

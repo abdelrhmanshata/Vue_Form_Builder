@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div v-if="show">
     <v-img
       class="rounded-md elevation-2 border"
       v-if="preview"
       :src="preview"
       :width="element.w_image"
       :height="element.h_image"
+      hide-details="auto"
       cover
       @error="handleError"
     >
@@ -37,14 +38,22 @@ interface ElementProps {
   h_image?: string;
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: File | null;
-  width?: string | number;
-  height?: string | number;
-  aspectRatio?: string | number;
-  cover?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: File | null;
+    width?: string | number;
+    height?: string | number;
+    aspectRatio?: string | number;
+    cover?: boolean;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 // state
 const preview = ref<string | null>(null);

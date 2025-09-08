@@ -2,199 +2,213 @@ import type { FormElementTemplate } from "@/types/form";
 
 // Form element templates - Updated with new elements
 export const formElementTemplates: FormElementTemplate[] = [
-    // Filed Inputs
-    {
-        type: "text",
-        label: "Text Input",
-        icon: "mdi-form-textbox",
-        defaultProps: {
-            label: "Text Field",
-            placeholder: "Enter text...",
-            required: false,
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  // Filed Label
+  {
+    type: "label",
+    label: "Label",
+    icon: "mdi-label-outline",
+    defaultProps: {
+      label: "Text",
+      required: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "textarea",
-        label: "Text Area",
-        icon: "mdi-text",
-        defaultProps: {
-            label: "Message",
-            placeholder: "Enter your message...",
-            required: false,
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  },
+  // Filed Inputs
+  {
+    type: "text",
+    label: "Text Input",
+    icon: "mdi-form-textbox",
+    defaultProps: {
+      label: "Text Field",
+      placeholder: "Enter text...",
+      required: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "number",
-        label: "Number Input",
-        icon: "mdi-numeric",
-        defaultProps: {
-            label: "Number",
-            placeholder: "Enter number...",
-            required: false,
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "textarea",
+    label: "Text Area",
+    icon: "mdi-text",
+    defaultProps: {
+      label: "Message",
+      placeholder: "Enter your message...",
+      required: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "email",
-        label: "Email Input",
-        icon: "mdi-email",
-        defaultProps: {
-            label: "Email Address",
-            placeholder: "Enter email...",
-            required: false,
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "number",
+    label: "Number Input",
+    icon: "mdi-numeric",
+    defaultProps: {
+      label: "Number",
+      placeholder: "Enter number...",
+      required: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    // Date Inputs
-    {
-        type: "date",
-        label: "Date Input",
-        icon: "mdi-calendar-edit",
-        defaultProps: {
-            label: "Date",
-            required: false,
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "email",
+    label: "Email Input",
+    icon: "mdi-email",
+    defaultProps: {
+      label: "Email Address",
+      placeholder: "Enter email...",
+      required: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "date_picker",
-        label: "Date Picker",
-        icon: "mdi-calendar-month",
-        defaultProps: {
-            label: "Date",
-            required: false,
-            multiple: false,
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  },
+  // Date Inputs
+  {
+    type: "date",
+    label: "Date Input",
+    icon: "mdi-calendar-edit",
+    defaultProps: {
+      label: "Date",
+      required: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    // Select Inputs
-    {
-        type: "select",
-        label: "Select Dropdown",
-        icon: "mdi-format-list-bulleted",
-        defaultProps: {
-            label: "Select Option",
-            multiple: false,
-            required: false,
-            width: "full",
-            newRow: false,
-            options: ["Option 1", "Option 2", "Option 3"],
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "date_picker",
+    label: "Date Picker",
+    icon: "mdi-calendar-month",
+    defaultProps: {
+      label: "Date",
+      required: false,
+      multiple: false,
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "auto_select",
-        label: "Auto Complete",
-        icon: "mdi-list-box-outline",
-        defaultProps: {
-            label: "Auto Complete",
-            multiple: false,
-            required: false,
-            width: "full",
-            newRow: false,
-            options: ["Option 1", "Option 2", "Option 3"],
-            validation: {},
-            dependencies: []
-        },
+  },
+  // Select Inputs
+  {
+    type: "select",
+    label: "Select Dropdown",
+    icon: "mdi-format-list-bulleted",
+    defaultProps: {
+      label: "Select Option",
+      multiple: false,
+      required: false,
+      width: "full",
+      newRow: false,
+      options: ["Option 1", "Option 2", "Option 3"],
+      validation: {},
+      dependencies: [],
     },
-    //   
-    {
-        type: "radio",
-        label: "Radio Button",
-        icon: "mdi-radiobox-marked",
-        defaultProps: {
-            label: "Radio Options",
-            inline: false,
-            required: false,
-            width: "full",
-            newRow: false,
-            options: ["Option 1", "Option 2", "Option 3"],
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "auto_select",
+    label: "Auto Complete",
+    icon: "mdi-list-box-outline",
+    defaultProps: {
+      label: "Auto Complete",
+      multiple: false,
+      required: false,
+      width: "full",
+      newRow: false,
+      options: ["Option 1", "Option 2", "Option 3"],
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "checkbox",
-        label: "Checkbox",
-        icon: "mdi-checkbox-marked",
-        defaultProps: {
-            label: "Checkbox Option",
-            inline: false,
-            required: false,
-            width: "full",
-            newRow: false,
-            options: ["Option 1", "Option 2"],
-            validation: {},
-            dependencies: []
-        },
+  },
+  //
+  {
+    type: "radio",
+    label: "Radio Button",
+    icon: "mdi-radiobox-marked",
+    defaultProps: {
+      label: "Radio Options",
+      inline: false,
+      required: false,
+      width: "full",
+      newRow: false,
+      options: ["Option 1", "Option 2", "Option 3"],
+      validation: {},
+      dependencies: [],
     },
-    // Media
-    {
-        type: "upload_image",
-        label: "Image Upload",
-        icon: "mdi-image-plus",
-        defaultProps: {
-            label: "Upload Image",
-            multiple: true,
-            required: false,
-            width: "full",
-            newRow: false,
-            maxFiles: 2, // Maximum 2 images,
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "checkbox",
+    label: "Checkbox",
+    icon: "mdi-checkbox-marked",
+    defaultProps: {
+      label: "Checkbox Option",
+      inline: false,
+      required: false,
+      width: "full",
+      newRow: false,
+      options: ["Option 1", "Option 2"],
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "upload_file",
-        label: "File Upload",
-        icon: "mdi-file-upload",
-        defaultProps: {
-            label: "Upload File",
-            multiple: true,
-            required: false,
-            width: "full",
-            newRow: false,
-            maxFiles: 3, // Maximum 3 files,
-            validation: {},
-            dependencies: []
-        },
+  },
+  // Media
+  {
+    type: "upload_image",
+    label: "Image Upload",
+    icon: "mdi-image-plus",
+    defaultProps: {
+      label: "Upload Image",
+      multiple: true,
+      required: false,
+      width: "full",
+      newRow: false,
+      maxFiles: 2, // Maximum 2 images,
+      validation: {},
+      dependencies: [],
     },
-    {
-        type: "image",
-        label: "Image",
-        icon: "mdi-image",
-        defaultProps: {
-            label: "Image",
-            file: null,
-            url: "",
-            required: false,
-            w_image: "100",
-            h_image: "100",
-            width: "full",
-            newRow: false,
-            validation: {},
-            dependencies: []
-        },
+  },
+  {
+    type: "upload_file",
+    label: "File Upload",
+    icon: "mdi-file-upload",
+    defaultProps: {
+      label: "Upload File",
+      multiple: true,
+      required: false,
+      width: "full",
+      newRow: false,
+      maxFiles: 3, // Maximum 3 files,
+      validation: {},
+      dependencies: [],
     },
+  },
+  {
+    type: "image",
+    label: "Image",
+    icon: "mdi-image",
+    defaultProps: {
+      label: "Image",
+      file: null,
+      url: "",
+      required: false,
+      w_image: "500",
+      h_image: "500",
+      width: "full",
+      newRow: false,
+      validation: {},
+      dependencies: [],
+    },
+  },
 ];

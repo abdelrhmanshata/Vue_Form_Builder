@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column">
+  <div v-if="show" class="d-flex flex-column">
     <v-label>
       <span v-if="element.required" class="text-red-500">*</span>
       {{ element.label || "Select Date" }}
@@ -12,6 +12,7 @@
       :max="element.validation?.maxDate"
       elevation="24"
       color="primary"
+      hide-details="auto"
       show-adjacent-months
     />
   </div>
@@ -29,11 +30,18 @@ interface ElementProps {
   validation?: FormValidation;
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: any;
-  rules?: Array<(v: any) => boolean | string>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: any): void;

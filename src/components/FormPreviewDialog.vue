@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialog" max-width="800px" scrollable persistent>
     <v-card>
-      <v-card-title class="d-flex align-center justify-space-between bg-primary">
+      <v-card-title
+        class="d-flex align-center justify-space-between bg-primary"
+      >
         <div class="d-flex align-center text-white">
           <v-icon icon="mdi-eye" class="mr-2" />
           Form Preview
@@ -9,7 +11,12 @@
             {{ form?.elements.length }} elements
           </v-chip>
         </div>
-        <v-btn icon="mdi-close" variant="text" color="white" @click="dialog = false" />
+        <v-btn
+          icon="mdi-close"
+          variant="text"
+          color="white"
+          @click="dialog = false"
+        />
       </v-card-title>
 
       <v-card-text class="pa-6">
@@ -17,7 +24,10 @@
           <!-- Form Header -->
           <div class="text-center mb-5">
             <h2 class="text-h4 mb-2 text-primary">{{ form.title }}</h2>
-            <p v-if="form.description" class="text-body-1 mb-6 text-grey-darken-1">
+            <p
+              v-if="form.description"
+              class="text-body-1 mb-6 text-grey-darken-1"
+            >
               {{ form.description }}
             </p>
             <v-divider class="my-5" />
@@ -36,12 +46,28 @@
                     class="form-group"
                     :class="`width-${element.width}`"
                   >
-                    <!-- Text Inputs -->
-                    <BaseTextField
-                      v-if="['text', 'email', 'number', 'date'].includes(element.type)"
+                    <!-- Text Label -->
+                    <BaseLabelField
+                      v-if="element.type === 'label'"
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
+                    />
+
+                    <!-- Text Inputs -->
+                    <BaseTextField
+                      v-else-if="
+                        ['text', 'email', 'number', 'date'].includes(
+                          element.type
+                        )
+                      "
+                      v-model="formData[element.id]"
+                      :element="element"
+                      :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Textarea -->
@@ -50,6 +76,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Date Picker -->
@@ -58,6 +86,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Select -->
@@ -67,6 +97,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Auto Complete -->
@@ -75,6 +107,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Radio Buttons -->
@@ -83,6 +117,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Checkboxes -->
@@ -91,6 +127,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Image Upload -->
@@ -99,6 +137,8 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- File Upload -->
@@ -107,12 +147,16 @@
                       v-model="formData[element.id]"
                       :element="element"
                       :rules="getValidationRules(element) || []"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
 
                     <!-- Image -->
                     <BaseImageField
                       v-else-if="element.type === 'image'"
                       :element="element"
+                      :show="shouldShowElement(element, formData)"
+                      :formData="formData"
                     />
                   </div>
                 </div>
@@ -147,9 +191,16 @@
         </div>
 
         <div v-else class="text-center py-8">
-          <v-icon icon="mdi-alert" size="64" color="grey-lighten-2" class="mb-4" />
+          <v-icon
+            icon="mdi-alert"
+            size="64"
+            color="grey-lighten-2"
+            class="mb-4"
+          />
           <h3 class="text-h6 mb-2 text-grey-darken-1">No form to preview</h3>
-          <p class="text-body-2 text-grey-darken-1">Please create a form first</p>
+          <p class="text-body-2 text-grey-darken-1">
+            Please create a form first
+          </p>
         </div>
       </v-card-text>
 
@@ -174,6 +225,7 @@ import BaseAutocompleteField from "@/components/Elements/BaseAutocompleteField.v
 import BaseImageUpload from "@/components/Elements/BaseImageUpload.vue";
 import BaseFileUpload from "@/components/Elements/BaseFileUpload.vue";
 import BaseImageField from "@/components/Elements/BaseImageField.vue";
+import BaseLabelField from "./Elements/BaseLabelField.vue";
 
 interface Props {
   modelValue: boolean;
@@ -270,10 +322,10 @@ const getValidationRules = (element: FormElement) => {
     );
   }
 
-  if (element.validation?.pattern) {
-    const regex = new RegExp(element.validation.pattern);
-    rules.push((v) => !v || regex.test(v) || "Invalid format");
-  }
+  // if (element.validation?.pattern) {
+  //   const regex = new RegExp(element.validation.pattern);
+  //   rules.push((v) => !v || regex.test(v) || "Invalid format");
+  // }
 
   if (element.validation?.min) {
     rules.push(
@@ -322,6 +374,63 @@ const resetForm = () => {
   });
   previewForm.value?.reset();
 };
+
+//
+function shouldShowElement(
+  element: any,
+  formData: Record<string, any>
+): boolean {
+  if (!element.dependencies || element.dependencies.length === 0) {
+    return true;
+  }
+
+  // And
+  const and_Value = element.dependencies.every((dep: any) =>
+    checkDependency(dep, formData)
+  );
+  console.log("and_Value:", and_Value);
+
+  // OR
+  const or_Value = element.dependencies.some((dep: any) =>
+    checkDependency(dep, formData)
+  );
+  console.log("or_Value:", or_Value);
+  //
+  // return and_Value;
+  return or_Value;
+}
+type ConditionType =
+  | "equals"
+  | "not_equals"
+  | "greater_than"
+  | "less_than"
+  | "includes";
+
+const conditionChecks: Record<
+  ConditionType,
+  (fieldValue: any, depValue: any) => boolean
+> = {
+  equals: (fieldValue, depValue) => fieldValue == depValue,
+  not_equals: (fieldValue, depValue) => fieldValue != depValue,
+  greater_than: (fieldValue, depValue) => Number(fieldValue) > Number(depValue),
+  less_than: (fieldValue, depValue) => Number(fieldValue) < Number(depValue),
+  includes: (fieldValue, depValue) =>
+    Array.isArray(fieldValue) && fieldValue.includes(depValue),
+};
+
+function checkDependency(
+  dep: {
+    elementId: string;
+    condition: ConditionType;
+    value: any;
+    action: string;
+  },
+  formData: Record<string, any>
+): boolean {
+  const fieldValue = formData[dep.elementId];
+  const checkFn = conditionChecks[dep.condition];
+  return checkFn ? checkFn(fieldValue, dep.value) : false;
+}
 
 // Reset form data when dialog opens
 watch(dialog, (newValue) => {

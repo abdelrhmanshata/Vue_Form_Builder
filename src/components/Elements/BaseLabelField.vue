@@ -1,43 +1,7 @@
 <template>
-  <!-- {{ `Element : ` }}
-  {{ element }}
-  <br />
-  {{ `Form Data : ` }}
-  {{ formData }} -->
-  <!--  -->
-  <v-text-field
-    v-if="show"
-    v-model="internalValue"
-    :type="element.type"
-    :placeholder="element.placeholder"
-    :required="element.required"
-    :rules="computedRules"
-    :prepend-inner-icon="fieldIcon"
-    color="primary"
-    icon-color="primary"
-    variant="outlined"
-    density="comfortable"
-    hide-details="auto"
-    clearable
-    :counter="element.validation?.maxLength"
-    :min="
-      element.type === 'date'
-        ? element.validation?.minDate
-        : element.validation?.min
-    "
-    :max="
-      element.type === 'date'
-        ? element.validation?.maxDate
-        : element.validation?.max
-    "
-  >
-    <template #label>
-      <span>
-        <span v-if="element.required" class="text-red-500">*</span>
-        {{ element.label }}
-      </span>
-    </template>
-  </v-text-field>
+  <div class="flex flex-col mb-3">
+    <h1 class="text-gray-600">{{ element.label }}</h1>
+  </div>
 </template>
 
 <script setup lang="ts">

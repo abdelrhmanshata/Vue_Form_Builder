@@ -10,7 +10,7 @@
 
     <v-card-text>
       <div v-if="element" class="properties-form">
-        {{ element }}
+        <!-- {{ element }} -->
         <!-- Basic Properties Section -->
         <v-expansion-panels
           variant="accordion"
@@ -249,6 +249,7 @@
                   show-size
                   clearable
                   chips
+                  @update:model-value="updateProperty('file', $event)"
                 >
                 </v-file-input>
 
@@ -262,6 +263,7 @@
                   icon-color="primary"
                   prepend-inner-icon="mdi-link"
                   clearable
+                  @update:model-value="updateProperty('url', $event)"
                 />
 
                 <v-text-field
@@ -274,6 +276,7 @@
                   density="compact"
                   variant="outlined"
                   clearable
+                  @update:model-value="updateProperty('alt', $event)"
                 />
               </div>
             </v-expansion-panel-text>
@@ -446,14 +449,14 @@
                   <!-- @update:model-value="updateDependency(index, 'value', $event)" -->
 
                   <!-- :model-value="dependency.action" -->
-                  <v-select
+                  <!-- <v-select
                     v-model="localDependencies[index].action"
                     :items="actionOptions"
                     label="Action"
                     variant="outlined"
                     density="compact"
                     class="mb-2"
-                  />
+                  /> -->
                   <!-- @update:model-value="updateDependency(index, 'action', $event)" -->
                 </div>
               </div>
@@ -469,9 +472,16 @@
               >
                 Add Dependency
                 <template v-slot:append>
-                  <v-tooltip v-if="!availableDependencies.length" location="top">
+                  <v-tooltip
+                    v-if="!availableDependencies.length"
+                    location="top"
+                  >
                     <template v-slot:activator="{ props }">
-                      <v-icon v-bind="props" icon="mdi-information" size="small" />
+                      <v-icon
+                        v-bind="props"
+                        icon="mdi-information"
+                        size="small"
+                      />
                     </template>
                     <span>No other elements available for dependency</span>
                   </v-tooltip>
@@ -519,7 +529,12 @@
 
       <!-- Empty State -->
       <div v-else class="empty-state text-center py-8">
-        <v-icon icon="mdi-cursor-pointer" size="64" color="grey-lighten-2" class="mb-4" />
+        <v-icon
+          icon="mdi-cursor-pointer"
+          size="64"
+          color="grey-lighten-2"
+          class="mb-4"
+        />
         <h3 class="text-h6 mb-2 text-grey-darken-1">No Element Selected</h3>
         <p class="text-body-2 text-grey-darken-1">
           Click on a form element to edit its properties
@@ -552,8 +567,8 @@ const expandedPanels = ref(["basic"]);
 const hasChanges = ref(false);
 
 const localOptions = ref<string[]>([...(props.element?.options ?? [])]);
-const checkWImage = ref(false);
-const checkHImage = ref(false);
+const checkWImage = ref(true);
+const checkHImage = ref(true);
 
 const elementTypeLabel = computed(() => {
   if (!props.element) return "";
@@ -586,7 +601,9 @@ const hasPlaceholder = computed(() => {
 
 const hasOptions = computed(() => {
   if (!props.element) return false;
-  return ["select", "auto_select", "radio", "checkbox"].includes(props.element.type);
+  return ["select", "auto_select", "radio", "checkbox"].includes(
+    props.element.type
+  );
 });
 
 const hasValidation = computed(() => {
@@ -734,7 +751,8 @@ const getValueHint = (condition: string) =>
 watch(
   () => props.element,
   (newElementVal) => {
-    if (newElementVal?.options) localOptions.value = [...newElementVal?.options];
+    if (newElementVal?.options)
+      localOptions.value = [...newElementVal?.options];
     if (newElementVal?.dependencies)
       localDependencies.value = [...newElementVal?.dependencies];
   },

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="show">
     <v-radio-group v-model="internalValue" :inline="element.inline" color="primary">
       <template #label>
         <div class="flex items-center gap-2">
@@ -42,11 +42,18 @@ interface ElementProps {
   options: string[];
 }
 
-const props = defineProps<{
-  element: ElementProps;
-  modelValue?: any;
-  rules?: Array<(v: any) => boolean | string>;
-}>();
+const props = withDefaults(
+  defineProps<{
+    element: ElementProps;
+    modelValue?: any;
+    rules?: Array<(v: any) => boolean | string>;
+    show?: boolean; // خليها optional
+    formData?: any;
+  }>(),
+  {
+    show: true, // Default Value
+  }
+);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: any): void;
